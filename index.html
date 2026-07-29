@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026 雪梨·藍山·獵人谷之旅</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#0284c7',     // Sky-600
+                        secondary: '#ea580c',   // Orange-600
+                        accent: '#f59e0b',      // Amber-500
+                        dark: '#1e293b',        // Slate-800
+                        light: '#f8fafc',       // Slate-50
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        
+        /* 隱藏滾動條但保持滾動功能 */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 頁面對切換動畫 */
+        .section-content { display: none; opacity: 0; }
+        .section-content.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 玻璃透視底部導航 */
+        .glass-nav { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(0,0,0,0.05); 
+        }
+        
+        /* 導航按鈕動畫 */
+        .nav-item { transition: all 0.2s ease; color: #94a3b8; }
+        .nav-item.active { color: #0284c7; transform: scale(1.05); }
+        .nav-item.active i { margin-bottom: 2px; }
+        
+        /* 行程時間軸樣式 */
+        .timeline-container { position: relative; padding-left: 24px; }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 10px;
+            bottom: -20px;
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+        .timeline-item { position: relative; padding-bottom: 1.5rem; }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-item::after { /* 圓點 */
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: white;
+            border: 3px solid #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        .timeline-item.highlight::after {
+            border-color: #0284c7;
+            background-color: #f0f9ff;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+        }
+        
+        /* SOS卡片閃爍效果 */
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(2, 132, 199, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+        }
+        .sos-card { animation: pulse-border 2s infinite; }
+        
+        /* 自定義 Checkbox */
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+        .custom-checkbox:checked {
+            background-color: #0284c7;
+            border-color: #0284c7;
+        }
+        .custom-checkbox:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 12px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .checked-text { text-decoration: line-through; color: #94a3b8; }
+    </style>
+</head>
+<body class="pb-24 text-dark antialiased selection:bg-sky-200">
+
+    <!-- 頂部標題列 (僅在非首頁顯示) -->
+    <header id="top-header" class="fixed top-0 inset-x-0 bg-white/90 backdrop-blur z-40 border-b border-gray-100 px-5 py-3 hidden transition-opacity duration-300">
+        <h1 id="header-title" class="text-lg font-bold text-center text-dark truncate"></h1>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="w-full max-w-md mx-auto min-h-screen relative">
+        
+        <!-- 導航列: 實用快速連結 (浮動於上方) -->
+        <div class="fixed top-2 right-2 z-50 flex gap-2">
+            <a href="tel:000" class="bg-white text-red-500 w-10 h-10 rounded-full flex justify-center items-center shadow-md text-xs font-bold border border-red-100">
+                <i class="fa-solid fa-ambulance text-lg"></i>
+            </a>
+            <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=Sydney')" class="bg-white text-blue-500 w-10 h-10 rounded-full flex justify-center items-center shadow-md text-xs font-bold border border-blue-100">
+                <i class="fa-solid fa-map-location-dot text-lg"></i>
+            </button>
+        </div>
+
+        <!-- ======================= -->
+        <!-- SECTION: 首頁 (Home)    -->
+        <!-- ======================= -->
+        <section id="home" class="section-content p-5 space-y-6 pt-5">
+            <!-- Hero Image & Info -->
+            <div class="relative rounded-3xl overflow-hidden h-64 shadow-lg group">
+                <div class="absolute inset-0 bg-gray-200 animate-pulse"></div> <!-- Loading Skeleton -->
+                <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                     onload="this.previousElementSibling.style.display='none'"
+                     alt="雪梨歌劇院" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/30 to-transparent"></div>
+                <div class="absolute bottom-0 inset-x-0 p-5 text-white">
+                    <span class="bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded-md mb-2 inline-block shadow-sm">
+                        <i class="fa-solid fa-plane text-[10px] mr-1"></i>10D9N 澳洲之旅
+                    </span>
+                    <h1 class="text-3xl font-black mb-1 drop-shadow-md tracking-wide">雪梨·藍山·獵人谷</h1>
+                    <p class="text-sm text-gray-200 font-medium">2026/09/27 - 10/06</p>
+                    
+                    <div class="mt-4 inline-flex items-center space-x-2 bg-black/40 backdrop-blur-md rounded-xl p-2.5 border border-white/20 shadow-inner">
+                        <div class="bg-primary w-8 h-8 rounded-lg flex items-center justify-center text-white">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div id="countdown" class="text-sm font-bold tracking-wider text-white">
+                            計算倒數中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 航班資訊 (Flight Info) -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-bold text-gray-500 mb-1 ml-1 flex items-center">
+                    <i class="fa-solid fa-plane-departure mr-2"></i>航班資訊
+                </h3>
+                
+                <!-- Ziv & Jan -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                    <div class="bg-indigo-50/50 px-4 py-2 border-b border-indigo-50 flex items-center">
+                        <span class="font-bold text-indigo-800 text-sm"><i class="fa-solid fa-user-group mr-1.5"></i>Ziv & Jan (9/27 ~ 10/06)</span>
+                    </div>
+                    <!-- 去程 -->
+                    <div class="p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-blue-50 text-blue-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-plane-arrival space-x-1 text-xl"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-xs text-gray-400 font-medium mb-0.5">去程抵達 (SYD)</p>
+                            <p class="font-bold text-gray-800">9/27 (六) 10:45 抵達</p>
+                            <p class="text-[11px] text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full inline-block mt-1 font-medium">Vicky 接機回市區</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patty -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                    <div class="bg-teal-50/50 px-4 py-2 border-b border-teal-50 flex items-center">
+                        <span class="font-bold text-teal-800 text-sm"><i class="fa-solid fa-user mr-1.5"></i>Patty (9/28 ~ 10/06)</span>
+                    </div>
+                    <!-- 去程 -->
+                    <div class="p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-blue-50 text-blue-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-plane-arrival space-x-1 text-xl"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-xs text-gray-400 font-medium mb-0.5">去程抵達 (SYD)</p>
+                            <p class="font-bold text-gray-800">9/28 (日) 10:45 抵達</p>
+                            <p class="text-[11px] text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full inline-block mt-1 font-medium">4人到齊！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 回程共同 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                    <div class="bg-orange-50/50 px-4 py-2 border-b border-orange-50 flex items-center">
+                        <span class="font-bold text-orange-800 text-sm"><i class="fa-solid fa-plane-departure mr-1.5"></i>全員回程</span>
+                    </div>
+                    <div class="p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-orange-50 text-orange-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-plane-departure text-xl"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-xs text-gray-400 font-medium mb-0.5">回程 (SYD → TPE)</p>
+                            <p class="font-bold text-gray-800">10/06 (二) 下午起飛</p>
+                            <p class="text-[11px] text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full inline-block mt-1 font-medium">11:30 辦理 TRS 退稅</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 住宿概覽 (Accommodation) -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-500 mb-3 ml-1 flex items-center">
+                    <i class="fa-solid fa-bed mr-2"></i>住宿重點
+                </h3>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                    <ul class="space-y-4 relative">
+                        <!-- 連接線 -->
+                        <div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-100"></div>
+                        
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-indigo-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">D1-D2, D7-D9</span>
+                                    <p class="font-bold mt-1">Vicky 雪梨市區家</p>
+                                    <p class="text-xs text-gray-500">雪梨市區 (共5晚)</p>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-teal-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-teal-500"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded">D3</span>
+                                    <p class="font-bold mt-1">Katoomba 2房2廳公寓</p>
+                                    <p class="text-xs text-gray-500">藍山國家公園 (1晚)</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-red-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded">D4</span>
+                                    <p class="font-bold mt-1">獵人谷度假村公寓</p>
+                                    <p class="text-xs text-gray-500">Pokolbin 區 (1晚)</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-sky-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-sky-500"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-sky-500 bg-sky-50 px-2 py-0.5 rounded">D5-D6</span>
+                                    <p class="font-bold mt-1">Kiama 2房2廳海景公寓</p>
+                                    <p class="text-xs text-gray-500">南部濱海 (連住2晚)</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 行程表 (Itinerary) -->
+        <!-- ======================= -->
+        <section id="itinerary" class="section-content pt-16 pb-6 px-5 min-h-screen">
+            
+            <!-- 天數切換器 (橫向滾動) -->
+            <div class="flex space-x-3 overflow-x-auto pb-4 pt-1 hide-scrollbar -mx-5 px-5 sticky top-12 z-30 bg-light/95 backdrop-blur">
+                <button onclick="showDay(1, this)" class="day-btn flex-none px-4 py-2.5 bg-primary text-white rounded-xl shadow-md text-sm font-bold transition-all">D1<span class="text-[10px] font-normal block opacity-80 mt-0.5">9/27</span></button>
+                <button onclick="showDay(2, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D2<span class="text-[10px] font-normal block opacity-80 mt-0.5">9/28</span></button>
+                <button onclick="showDay(3, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all">D3 🚗<span class="text-[10px] font-normal block opacity-80 mt-0.5">9/29 自駕</span></button>
+                <button onclick="showDay(4, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all">D4 🚗<span class="text-[10px] font-normal block opacity-80 mt-0.5">9/30 自駕</span></button>
+                <button onclick="showDay(5, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all">D5 🚗<span class="text-[10px] font-normal block opacity-80 mt-0.5">10/1 自駕</span></button>
+                <button onclick="showDay(6, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all">D6 🚗<span class="text-[10px] font-normal block opacity-80 mt-0.5">10/2 自駕</span></button>
+                <button onclick="showDay(7, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all">D7 🚗<span class="text-[10px] font-normal block opacity-80 mt-0.5">10/3 返城</span></button>
+                <button onclick="showDay(8, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D8<span class="text-[10px] font-normal block opacity-80 mt-0.5">10/4</span></button>
+                <button onclick="showDay(9, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D9<span class="text-[10px] font-normal block opacity-80 mt-0.5">10/5</span></button>
+                <button onclick="showDay(10, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D10<span class="text-[10px] font-normal block opacity-80 mt-0.5">10/6</span></button>
+            </div>
+
+            <!-- Day 1 Content -->
+            <div id="day-1" class="day-content mt-4 animate-[fadeIn_0.3s_ease-out]">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-indigo-100 text-indigo-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-plane-arrival text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">雪梨初抵達，迎賓海鮮與港灣微醺</h2>
+                        <p class="text-xs text-gray-500">Day 1: 9/27 (六)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">Vicky 雪梨市區家</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算估計</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 AUD $80–$110 / 人</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">09:00 – 10:45</p>
+                            <h4 class="font-bold text-dark text-sm">Ziv & Jan 抵達雪梨機場 (SYD)</h4>
+                            <p class="text-xs text-gray-500 mt-1">Vicky 接機回市區放行李。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">12:30 – 14:00</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：Sydney Fish Market</h4>
+                            <p class="text-xs text-gray-500 mt-1">現切生蠔、蒜香焗烤龍蝦、刺身拼盤。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:30 – 16:30</p>
+                            <h4 class="font-bold text-dark text-sm">Darling Harbour (達令港)</h4>
+                            <p class="text-xs text-gray-500 mt-1">漫步拍照，至 Woolworths 採買自駕零食補給。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">17:00 – 19:00</p>
+                            <h4 class="font-bold text-dark text-sm">麥覺理夫人椅 & 皇家植物園</h4>
+                            <p class="text-xs text-gray-500 mt-1">拍攝歌劇院夕陽絕景 (Mrs Macquarie's Chair)。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">19:30 – 21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：Chat Thai (Haymarket)</h4>
+                            <div class="bg-orange-50 p-2 rounded-lg mt-2 border border-orange-100">
+                                <p class="text-xs text-orange-800 font-medium">極道地泰式海鮮炒河粉、酸辣蝦湯。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 2 Content -->
+            <div id="day-2" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-amber-100 text-amber-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-brands fa-fort-awesome text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">全員會合！歌劇院與百年建築巡禮</h2>
+                        <p class="text-xs text-gray-500">Day 2: 9/28 (日)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">Vicky 雪梨市區家</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算估計</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 AUD $120–$150 / 人</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">09:00 – 10:30</p>
+                            <h4 class="font-bold text-dark text-sm">早餐：The Grounds of the City</h4>
+                            <p class="text-xs text-gray-500 mt-1">酪梨吐司佐水波蛋、Flat White。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:45 – 12:30</p>
+                            <h4 class="font-bold text-dark text-sm">接 Patty，返回市區會合</h4>
+                            <p class="text-xs text-gray-500 mt-1">接 10:45 抵達的 Patty，返回市區會合放行李，4 人到齊！</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:00 – 14:30</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：Pancake On The Rocks</h4>
+                            <p class="text-xs text-gray-500 mt-1">招牌烤豬腳 Pork Knuckle、草莓鬆餅。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:30 – 17:00</p>
+                            <h4 class="font-bold text-dark text-sm">岩石區歷史街區 & 雪梨歌劇院</h4>
+                            <p class="text-xs text-gray-500 mt-1">含聖瑪麗大教堂。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">17:30 – 19:30</p>
+                            <h4 class="font-bold text-dark text-sm">QVB 維多利亞女王大廈</h4>
+                            <p class="text-xs text-gray-500 mt-1">欣賞百年彩繪玻璃與古董鐘。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">20:00 – 21:30</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：Hurricane's Grill</h4>
+                            <p class="text-xs text-gray-500 mt-1">Darling Harbour店 (需預約)。招牌 BBQ 烤豬肋排、香烤大蝦。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 3 Content -->
+            <div id="day-3" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-red-100 text-red-500 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-car-side text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">螢火蟲洞直衝秘境 ➔ 蘿拉小鎮</h2>
+                        <p class="text-xs text-gray-500">Day 3: 9/29 (一)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-red-50 p-3 rounded-2xl shadow-sm border border-red-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-red-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-red-700 leading-tight">Katoomba 2房2廳包棟公寓</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算估計</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 AUD $70–$95 / 人</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">08:00 – 10:30</p>
+                            <h4 class="font-bold text-dark text-sm">自駕前往 Glow Worm Tunnel</h4>
+                            <p class="text-xs text-gray-500 mt-1">從雪梨市區直衝藍山深處螢火蟲洞（車程約 2.5 小時）。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">10:30 – 12:30</p>
+                            <h4 class="font-bold text-dark text-sm">景點：Glow Worm Tunnel</h4>
+                            <p class="text-xs text-gray-500 mt-1">徒步探訪舊鐵路隧道，體驗天然藍光螢火蟲 (自備手電筒，嚴禁照射蟲體)。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:30 – 15:00</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：Wayzgoose Cafe (Leura)</h4>
+                            <p class="text-xs text-gray-500 mt-1">Devonshire Scone 司司康與果醬、雞肉帕尼尼。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">15:00 – 17:00</p>
+                            <h4 class="font-bold text-dark text-sm">Leura (蘿拉小鎮) 散步</h4>
+                            <p class="text-xs text-gray-500 mt-1">英式鄉村風情小鎮、春季花卉與手作小店。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">17:30 – 19:00</p>
+                            <h4 class="font-bold text-dark text-sm">Echo Point (三姊妹岩)</h4>
+                            <p class="text-xs text-gray-500 mt-1">捕捉夕陽金光撒在大峽谷的絕景。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">19:30 – 21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：Station Bar & Bites</h4>
+                            <p class="text-xs text-gray-500 mt-1">Katoomba。在地精釀啤酒、木烤海鮮比薩。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 4 Content -->
+            <div id="day-4" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-red-100 text-red-500 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-wine-glass text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">藍山纜車體驗 ➔ 獵人谷酒莊</h2>
+                        <p class="text-xs text-gray-500">Day 4: 9/30 (二)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-red-50 p-3 rounded-2xl shadow-sm border border-red-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-red-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-red-700 leading-tight">獵人谷 Pokolbin 公寓</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算估計</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 AUD $170–$220 / 人</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">08:30 – 10:30</p>
+                            <h4 class="font-bold text-dark text-sm">Scenic World (藍山景觀世界)</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 需預約。搭乘全球最陡峭紅色火車與高空纜車。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:30 – 11:30</p>
+                            <h4 class="font-bold text-dark text-sm">早午餐：The Conservation Hut</h4>
+                            <p class="text-xs text-gray-500 mt-1">懸崖景觀咖啡館享用歐姆蛋。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">11:30 – 14:00</p>
+                            <h4 class="font-bold text-dark text-sm">自駕前往獵人谷 (Hunter Valley)</h4>
+                            <p class="text-xs text-gray-500 mt-1">車程約 2.5 小時，210 公里。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:15 – 15:15</p>
+                            <h4 class="font-bold text-dark text-sm">酒莊 1：Saltire Estate</h4>
+                            <p class="text-xs text-gray-500 mt-1">蘇格蘭風格造景，品嚐優雅 Semillon 白酒。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">15:30 – 16:30</p>
+                            <h4 class="font-bold text-dark text-sm">酒莊 2：Ernest Hill Wines</h4>
+                            <p class="text-xs text-gray-500 mt-1">家族經營精品酒莊，必嚐甜白酒與 Shiraz。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">16:45 – 18:00</p>
+                            <h4 class="font-bold text-dark text-sm">酒莊 3：Brokenwood Wines</h4>
+                            <p class="text-xs text-gray-500 mt-1">獵人谷旗艦大酒莊，品嚐 Graveyard Shiraz。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:30 – 21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：Bimbadgen Esca</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 需預約。帽子餐廳級香煎海鱸魚、櫻桃鴨胸。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 5 Content -->
+            <div id="day-5" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-red-100 text-red-500 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-hot-tub-person text-xl"></i> <!-- balloon alternative -->
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">日出熱氣球 ➔ 南下 Kiama</h2>
+                        <p class="text-xs text-gray-500">Day 5: 10/1 (四)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-red-50 p-3 rounded-2xl shadow-sm border border-red-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-red-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-red-700 leading-tight">Kiama 海景公寓</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算估計</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 AUD $350–$420 / 人</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">04:00 – 08:30</p>
+                            <h4 class="font-bold text-dark text-sm">獵人谷日出熱氣球</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 必須預約 (Balloon Aloft)。升空迎日出，07:30 享用香檳早餐。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">09:30 – 11:30</p>
+                            <h4 class="font-bold text-dark text-sm">Hunter Valley Gardens</h4>
+                            <p class="text-xs text-gray-500 mt-1">獵人谷花園。春季百花齊放，日式與義式庭園。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">12:00 – 13:30</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：The Farm Shop</h4>
+                            <p class="text-xs text-gray-500 mt-1">Elements Restaurant，地中海海鮮燉飯、香草烤雞。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:30 – 17:30</p>
+                            <h4 class="font-bold text-dark text-sm">自駕南下前往 Kiama</h4>
+                            <p class="text-xs text-gray-500 mt-1">車程約 3.5 小時，中間於 Wollongong 休息。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">18:00 – 19:00</p>
+                            <h4 class="font-bold text-dark text-sm">Kiama Blowhole (噴水洞)</h4>
+                            <p class="text-xs text-gray-500 mt-1">觀賞海水經岩石縫隙噴出數十公尺水柱。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">19:30 – 21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：Cargo Millmann Kiama</h4>
+                            <p class="text-xs text-gray-500 mt-1">炸魚薯條 Fish & Chips、蒜味奶油烤蝦。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 6 Content -->
+            <div id="day-6" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-cyan-100 text-cyan-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-water text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">濱海酒莊與壯麗 Coast Walk</h2>
+                        <p class="text-xs text-gray-500">Day 6: 10/2 (五)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-red-50 p-3 rounded-2xl shadow-sm border border-red-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-red-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-red-700 leading-tight">Kiama 海景公寓 (續住)</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算估計</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 AUD $120–$160 / 人</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">09:00 – 10:30</p>
+                            <h4 class="font-bold text-dark text-sm">早餐：The Hungry Monkey Kiama</h4>
+                            <p class="text-xs text-gray-500 mt-1">豪華海鮮歐姆蛋、手作漢堡。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">10:30 – 12:30</p>
+                            <h4 class="font-bold text-dark text-sm">Little Blowhole & Coast Walk</h4>
+                            <p class="text-xs text-gray-500 mt-1">小噴水洞與海岸步道散步。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:00 – 15:30</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：Crooked River Wines</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 建議預約。濱海酒莊，香煎干貝與海鱸魚。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">16:00 – 18:00</p>
+                            <h4 class="font-bold text-dark text-sm">Cathedral Rocks (教堂岩)</h4>
+                            <p class="text-xs text-gray-500 mt-1">玄武岩柱屹立於海浪中。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">19:00 – 21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：Olive & Vine (Kiama)</h4>
+                            <p class="text-xs text-gray-500 mt-1">墨魚海鮮義大利麵、窯烤松露黑蕈菇披薩。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 7 Content -->
+            <div id="day-7" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-purple-100 text-purple-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-city text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">重返雪梨！岩石區週末市集</h2>
+                        <p class="text-xs text-gray-500">Day 7: 10/3 (六)</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">Vicky 雪梨市區家</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算估計</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 AUD $80–$110 / 人</span>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">08:30 – 10:30</p>
+                            <h4 class="font-bold text-dark text-sm">自駕返回雪梨市區</h4>
+                            <p class="text-xs text-gray-500 mt-1">約 2 小時，120 公里，車停 Vicky 家。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">11:00 – 13:30</p>
+                            <h4 class="font-bold text-dark text-sm">The Rocks Markets (岩石區市集)</h4>
+                            <p class="text-xs text-gray-500 mt-1">僅週六日開放，手作藝品與美食，順便午餐。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:00 – 16:30</p>
+                            <h4 class="font-bold text-dark text-sm">雪梨大學 (University of Sydney)</h4>
+                            <p class="text-xs text-gray-500 mt-1">參觀砂岩哥德式「哈利波特樓」。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">17:30 – 19:30</p>
+                            <h4 class="font-bold text-dark text-sm">雪梨港灣大橋黃昏步行</h4>
+                            <p class="text-xs text-gray-500 mt-1">漫步至 Milsons Point 欣賞夕陽天際線。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">20:00 – 21:30</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：市區平價海鮮燒烤</h4>
+                            <p class="text-xs text-gray-500 mt-1">甜點：Gelato Messina 冰淇淋。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 8 Content -->
+            <div id="day-8" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-orange-100 text-orange-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">水上 SUP 划槳與精緻帽子餐廳</h2>
+                        <p class="text-xs text-gray-500">Day 8: 10/4 (日) ⏰ 日光節約啟動！</p>
+                    </div>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-xl mb-4 text-sm font-medium flex items-start">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5 mr-2"></i>
+                    <div>注意：本日凌晨 02:00 時間撥快 1 小時 (時差變為 +3 小時)</div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">08:30 – 09:30</p>
+                            <h4 class="font-bold text-dark text-sm">早餐：Bill's (Surry Hills)</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 建議預約。知名 Ricotta Hotcakes 鬆餅。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:00 – 12:30</p>
+                            <h4 class="font-bold text-dark text-sm">Rose Bay SUP 立槳划槳船</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 需預約。平靜海灣中划槳遠眺歌劇院。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:00 – 14:30</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：Coogee Pavilion</h4>
+                            <p class="text-xs text-gray-500 mt-1">海鮮比薩、烤透抽、冰涼鮮釀啤酒。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">15:00 – 17:30</p>
+                            <h4 class="font-bold text-dark text-sm">Coogee Beach & Coastal Walk</h4>
+                            <p class="text-xs text-gray-500 mt-1">造訪美麗海洋泳池 Giles Baths。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:30 – 21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：AALIA Restaurant</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 必須預約。帽子餐廳！頂級中東地中海海鮮料理。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 9 Content -->
+            <div id="day-9" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-pink-100 text-pink-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-spa text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">伴手禮採購與極致水療放鬆</h2>
+                        <p class="text-xs text-gray-500">Day 9: 10/5 (一)</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">09:00 – 10:30</p>
+                            <h4 class="font-bold text-dark text-sm">早餐：Single O (Surry Hills)</h4>
+                            <p class="text-xs text-gray-500 mt-1">手沖精品咖啡、酪梨酸面包吐司。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:30 – 13:00</p>
+                            <h4 class="font-bold text-dark text-sm">購物：QVB & Chemist Warehouse</h4>
+                            <p class="text-xs text-gray-500 mt-1">木瓜膏、Swisse 保健品、Aesop、Tim Tam。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">13:00 – 14:30</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：泰式街頭小吃 或 Maccas</h4>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">15:00 – 17:30</p>
+                            <h4 class="font-bold text-dark text-sm">水療：Nature's Energy Bathhouse</h4>
+                            <p class="text-xs text-gray-500 mt-1">⚠️ 必須預約。蒸氣室、冰火水療池與桑拿。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:30 – 21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：Vicky 家自煮海鮮火鍋派對</h4>
+                            <p class="text-xs text-gray-500 mt-1">或岩石區海鮮餐館。晚上整理行李與 TRS 退稅單據。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 10 Content -->
+            <div id="day-10" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-gray-200 text-gray-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-plane-departure text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">離境退稅，滿載而歸</h2>
+                        <p class="text-xs text-gray-500">Day 10: 10/6 (二)</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">08:30 – 10:00</p>
+                            <h4 class="font-bold text-dark text-sm">早餐：在地 Bakery</h4>
+                            <p class="text-xs text-gray-500 mt-1">買肉桂捲與咖啡。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:30 – 11:30</p>
+                            <h4 class="font-bold text-dark text-sm">前往雪梨國際機場 (SYD)</h4>
+                            <p class="text-xs text-gray-500 mt-1">Vicky 開車送大家前往機場。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">11:30 – 13:30</p>
+                            <h4 class="font-bold text-dark text-sm">TRS 離境退稅</h4>
+                            <p class="text-xs text-gray-500 mt-1">出示 TRS App QR Code、發票與退稅物品。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:30 – ✈️</p>
+                            <h4 class="font-bold text-dark text-sm">搭機返家</h4>
+                            <p class="text-xs text-gray-500 mt-1">返回溫暖的家！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 飲食SOS (SOS)  -->
+        <!-- ======================= -->
+        <section id="sos" class="section-content pt-16 pb-6 px-5 h-screen">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-black text-dark">飲食需求卡</h2>
+                <p class="text-sm text-gray-500 mt-1">點餐時請直接將此畫面出示給服務人員</p>
+            </div>
+
+            <!-- SOS 閃爍卡片 -->
+            <div class="sos-card bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-primary relative">
+                <!-- 裝飾折角 -->
+                <div class="absolute -top-6 -right-6 w-16 h-16 bg-blue-100 rotate-45 transform origin-bottom-left"></div>
+                
+                <div class="bg-primary py-3 px-5 text-center">
+                    <span class="text-white font-black tracking-widest text-lg"><i class="fa-solid fa-circle-exclamation mr-2"></i>DIETARY REQUIREMENTS</span>
+                </div>
+                
+                <div class="p-6">
+                    <div class="text-center space-y-4">
+                        <p class="text-xl font-bold text-dark leading-relaxed">
+                            We cannot eat
+                        </p>
+                        <div class="bg-blue-50 py-3 rounded-xl border border-blue-100 transform rotate-1 my-4">
+                            <p class="text-2xl font-black text-blue-700 underline decoration-blue-300 decoration-4 underline-offset-4">
+                                Beef, Lamb, Mutton
+                            </p>
+                        </div>
+                        <p class="text-lg font-medium text-gray-600 leading-relaxed italic">
+                            (No red meat exceptions)
+                        </p>
+                    </div>
+                    
+                    <div class="my-6 border-b border-dashed border-gray-300"></div>
+                    
+                    <div class="flex items-center justify-center bg-green-50 p-4 rounded-xl text-center">
+                        <i class="fa-solid fa-circle-check text-green-500 text-xl mr-3"></i>
+                        <p class="text-base font-bold text-green-800">
+                            Pork, Chicken, Seafood & Vegetables<br>
+                            <span class="text-sm font-medium">are perfectly fine!</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 避開關鍵字 -->
+            <div class="mt-8 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="text-sm font-bold text-gray-800 mb-3 border-b border-gray-100 pb-2">
+                    <span class="text-red-500 mr-1">❌</span> 菜單避雷字眼 (含有牛羊)
+                </h3>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐮 Beef (牛肉)</div>
+                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🥩 Steak (牛排)</div>
+                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐑 Lamb (小羊肉)</div>
+                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐑 Mutton (羊肉)</div>
+                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐮 Veal (小牛肉)</div>
+                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🍔 Wagyu (和牛)</div>
+                </div>
+            </div>
+            
+            <div class="h-10"></div>
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 實用工具 (Tools) -->
+        <!-- ======================= -->
+        <section id="tools" class="section-content pt-16 pb-6 px-5 min-h-screen">
+            <!-- 匯率換算機 -->
+            <div class="bg-gradient-to-br from-cyan-600 to-blue-700 p-6 rounded-3xl shadow-lg relative overflow-hidden mb-6 text-white">
+                <!-- 裝飾背景圖案 -->
+                <i class="fa-solid fa-dollar-sign absolute -right-2 -bottom-2 text-8xl opacity-10 transform -rotate-12"></i>
+                
+                <h3 class="font-bold mb-4 flex items-center text-lg">
+                    <i class="fa-solid fa-calculator mr-2 text-yellow-300"></i>匯率閃電換算 (AUD)
+                </h3>
+                <p class="text-xs text-blue-200 mb-4 tracking-wide">參考匯率：21.5 (自動四捨五入)</p>
+                
+                <div class="flex flex-col space-y-3 relative z-10">
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-dark font-bold">A$</span>
+                        <input type="number" id="audInput" oninput="convertCurrency()" placeholder="輸入澳幣金額" class="w-full bg-white text-dark text-lg font-bold rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-4 focus:ring-cyan-300/50 transition">
+                    </div>
+                    
+                    <div class="flex justify-center -my-1 z-20">
+                        <div class="bg-yellow-400 text-dark w-8 h-8 rounded-full flex items-center justify-center border-4 border-blue-600 shadow-sm">
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4 flex justify-between items-center">
+                        <span class="text-sm font-medium">換算台幣</span>
+                        <div class="text-2xl font-black tracking-tight flex items-baseline">
+                            <span class="text-sm mr-1 font-normal">NT$</span>
+                            <span id="twdOutput">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 出發前打包清單 -->
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center text-lg">
+                        <i class="fa-solid fa-suitcase mr-2 text-teal-500"></i>行前確認清單
+                    </h3>
+                    <button onclick="resetChecklist()" class="text-xs text-gray-400 hover:text-red-500 underline transition">
+                        重置
+                    </button>
+                </div>
+                
+                <div class="space-y-1" id="checklist">
+                    <!-- 動態生成選項 -->
+                </div>
+            </div>
+            
+            <div class="h-10"></div>
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 記帳本 (Expense) -->
+        <!-- ======================= -->
+        <section id="expense" class="section-content pt-16 pb-32 px-5 min-h-screen">
+            <div id="expense-root"></div>
+        </section>
+
+    </main>
+
+    <!-- ======================= -->
+    <!-- 底部固定導航標籤列       -->
+    <!-- ======================= -->
+    <nav class="fixed bottom-0 inset-x-0 glass-nav shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 rounded-t-2xl">
+        <div class="max-w-md mx-auto flex justify-around items-end pt-3 pb-safe bg-transparent">
+            <!-- Home -->
+            <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center flex-1 pb-3" id="tab-home">
+                <div class="relative">
+                    <i class="fa-solid fa-house text-xl mb-1 block"></i>
+                </div>
+                <span class="text-[10px] font-bold tracking-wide">首頁</span>
+            </button>
+            
+            <!-- Itinerary -->
+            <button onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center flex-1 pb-3" id="tab-itinerary">
+                <i class="fa-solid fa-map text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">行程</span>
+            </button>
+            
+            <!-- SOS -->
+            <button onclick="switchTab('sos')" class="nav-item flex flex-col items-center flex-1 pb-3 relative" id="tab-sos">
+                <i class="fa-solid fa-heart-pulse text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">飲食需求</span>
+            </button>
+            
+            <!-- Expense -->
+            <button onclick="switchTab('expense')" class="nav-item flex flex-col items-center flex-1 pb-3" id="tab-expense">
+                <i class="fa-solid fa-file-invoice-dollar text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">記帳本</span>
+            </button>
+            
+            <!-- Tools -->
+            <button onclick="switchTab('tools')" class="nav-item flex flex-col items-center flex-1 pb-3" id="tab-tools">
+                <i class="fa-solid fa-toolbox text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">工具</span>
+            </button>
+        </div>
+        <!-- iOS 底部安全距離適配 -->
+        <div class="h-2 w-full"></div>
+    </nav>
+
+    <!-- ======================= -->
+    <!-- Javascript 邏輯區域     -->
+    <!-- ======================= -->
+    <script>
+        // === 1. Tab 切換邏輯 ===
+        const sectionTitles = {
+            'home': '', 
+            'itinerary': '每日行程總覽',
+            'expense': '旅費記帳本',
+            'sos': '', 
+            'tools': '旅行實用工具'
+        };
+
+        function switchTab(tabId) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            document.querySelectorAll('.section-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            const header = document.getElementById('top-header');
+            const headerTitle = document.getElementById('header-title');
+            
+            if (sectionTitles[tabId]) {
+                headerTitle.textContent = sectionTitles[tabId];
+                header.classList.remove('hidden');
+                setTimeout(() => header.classList.add('opacity-100'), 10);
+            } else {
+                header.classList.remove('opacity-100');
+                setTimeout(() => header.classList.add('hidden'), 300);
+            }
+        }
+
+        // === 2. 行程天數切換邏輯 ===
+        function showDay(day, btnElement) {
+            document.querySelectorAll('.day-content').forEach(el => el.classList.add('hidden'));
+            
+            const targetDay = document.getElementById('day-' + day);
+            if (targetDay) {
+                targetDay.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                if(btn.innerText.includes('🚗')) {
+                    btn.className = "day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all";
+                } else {
+                    btn.className = "day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all";
+                }
+            });
+
+            btnElement.className = "day-btn flex-none px-4 py-2.5 bg-primary text-white rounded-xl shadow-md text-sm font-bold transition-all transform scale-105";
+        }
+
+        // === 3. 匯率換算邏輯 ===
+        function convertCurrency() {
+            const inputVal = document.getElementById('audInput').value;
+            const outputEl = document.getElementById('twdOutput');
+            
+            if (!inputVal || inputVal <= 0) {
+                outputEl.innerText = '0';
+                return;
+            }
+            // 匯率 21.5
+            const twd = Math.round(inputVal * 21.5);
+            outputEl.innerText = twd.toLocaleString();
+        }
+
+        // === 4. 倒數計時邏輯 ===
+        function initCountdown() {
+            const targetDate = new Date('2026/09/27 10:45:00').getTime();
+            const countdownEl = document.getElementById('countdown');
+
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const dist = targetDate - now;
+
+                if (dist < 0) {
+                    clearInterval(timer);
+                    countdownEl.innerHTML = '<span class="text-yellow-300"><i class="fa-solid fa-plane-arrival mr-1"></i>Welcome to Sydney！</span>';
+                    return;
+                }
+
+                const days = Math.floor(dist / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                countdownEl.innerHTML = `倒數 <span class="bg-white text-primary px-1.5 py-0.5 rounded text-xs mx-1">${days}</span> 天 <span class="bg-white text-primary px-1.5 py-0.5 rounded text-xs mx-1">${hours}</span> 時`;
+            }, 1000);
+        }
+
+        // === 5. 本地儲存 Checklist 邏輯 ===
+        const checklistData = [
+            { id: 'item1', text: '護照正本 (效期>6個月)' },
+            { id: 'item2', text: '澳洲電子簽證 (ETA)' },
+            { id: 'item3', text: '台灣駕照正本 + 國際駕照' },
+            { id: 'item4', text: '信用卡 (澳洲大多感應支付)' },
+            { id: 'item5', text: '八字型萬用轉接頭' },
+            { id: 'item6', text: '防曬用品 (太陽眼鏡/帽子)' },
+            { id: 'item7', text: '行動電源' }
+        ];
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist');
+            container.innerHTML = '';
+            
+            const savedState = JSON.parse(localStorage.getItem('sydney_checklist')) || {};
+
+            checklistData.forEach(item => {
+                const isChecked = savedState[item.id] || false;
+                
+                const label = document.createElement('label');
+                label.className = "flex items-center p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition tap-highlight-transparent";
+                
+                label.innerHTML = `
+                    <input type="checkbox" id="${item.id}" class="custom-checkbox flex-shrink-0" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}', this)">
+                    <span class="ml-3 text-sm font-medium ${isChecked ? 'checked-text' : 'text-gray-700'} transition" id="text-${item.id}">${item.text}</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function toggleCheck(id, checkbox) {
+            const textEl = document.getElementById('text-' + id);
+            if (checkbox.checked) {
+                textEl.classList.add('checked-text');
+                textEl.classList.remove('text-gray-700');
+            } else {
+                textEl.classList.remove('checked-text');
+                textEl.classList.add('text-gray-700');
+            }
+
+            const savedState = JSON.parse(localStorage.getItem('sydney_checklist')) || {};
+            savedState[id] = checkbox.checked;
+            localStorage.setItem('sydney_checklist', JSON.stringify(savedState));
+        }
+
+        function resetChecklist() {
+            if(confirm('確定要清除所有打勾記錄嗎？')) {
+                localStorage.removeItem('sydney_checklist');
+                renderChecklist();
+            }
+        }
+
+        // === 6. 導航按鈕邏輯 ===
+        function initNavigation() {
+            const drivingDays = [3, 4, 5, 6, 7]; 
+            
+            document.querySelectorAll('.day-content').forEach(dayEl => {
+                const dayId = dayEl.id;
+                if (!dayId) return;
+                const dayNum = parseInt(dayId.split('-')[1]);
+                const isDriving = drivingDays.includes(dayNum);
+                
+                dayEl.querySelectorAll('.timeline-item h4').forEach(h4 => {
+                    let locationText = h4.innerText.trim();
+                    
+                    const ignoreList = [
+                        'Ziv & Jan 抵達雪梨機場 (SYD)',
+                        '接 Patty，返回市區會合',
+                        '自駕前往 Glow Worm Tunnel',
+                        '自駕前往獵人谷 (Hunter Valley)',
+                        '自駕南下前往 Kiama',
+                        '自駕返回雪梨市區',
+                        '前往雪梨國際機場 (SYD)',
+                        'TRS 離境退稅',
+                        '搭機返家'
+                    ];
+                    if (ignoreList.includes(locationText) || locationText.includes('搭乘')) return;
+                    
+                    if (locationText.includes('：')) {
+                        locationText = locationText.split('：')[1].trim();
+                    }
+                    locationText = locationText.split('(')[0].split('（')[0].trim();
+                    
+                    if (!locationText) return;
+                    const navUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationText + " Sydney Australia")}`;
+                    
+                    const navBtn = document.createElement('a');
+                    navBtn.href = navUrl;
+                    navBtn.target = "_blank";
+                    navBtn.className = "inline-flex items-center justify-center ml-2 text-blue-500 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors shadow-sm border border-blue-100";
+                    navBtn.innerHTML = isDriving 
+                        ? '<i class="fa-solid fa-car-side mr-1"></i>導航' 
+                        : '<i class="fa-solid fa-location-arrow mr-1"></i>導航';
+                    
+                    h4.classList.add('flex', 'items-center', 'flex-wrap', 'gap-y-1');
+                    h4.appendChild(navBtn);
+                });
+            });
+        }
+
+        // === 7. 小時級即時天氣邏輯 ===
+        async function initWeather() {
+            const locations = {
+                'sydney': { lat: -33.8688, lon: 151.2093, name: '雪梨市區' },
+                'katoomba': { lat: -33.7150, lon: 150.3111, name: '藍山' },
+                'hunter': { lat: -32.7885, lon: 151.2954, name: '獵人谷' },
+                'kiama': { lat: -34.6708, lon: 150.8542, name: '凱阿瑪' }
+            };
+
+            const weatherCodes = {
+                0: { desc: '晴天', icon: 'fa-sun', color: 'text-amber-500' },
+                1: { desc: '晴時多雲', icon: 'fa-cloud-sun', color: 'text-amber-500' },
+                2: { desc: '多雲', icon: 'fa-cloud', color: 'text-gray-400' },
+                3: { desc: '陰天', icon: 'fa-cloud', color: 'text-gray-500' },
+                45: { desc: '霧', icon: 'fa-smog', color: 'text-gray-400' },
+                48: { desc: '霧', icon: 'fa-smog', color: 'text-gray-400' },
+                51: { desc: '毛毛雨', icon: 'fa-cloud-rain', color: 'text-blue-400' },
+                53: { desc: '毛毛雨', icon: 'fa-cloud-rain', color: 'text-blue-400' },
+                55: { desc: '毛毛雨', icon: 'fa-cloud-rain', color: 'text-blue-400' },
+                61: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                63: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                65: { desc: '大雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-600' },
+                71: { desc: '雪', icon: 'fa-snowflake', color: 'text-blue-300' },
+                73: { desc: '雪', icon: 'fa-snowflake', color: 'text-blue-300' },
+                75: { desc: '大雪', icon: 'fa-snowflake', color: 'text-blue-300' },
+                80: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                81: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                82: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                95: { desc: '雷雨', icon: 'fa-cloud-bolt', color: 'text-purple-500' }
+            };
+
+            try {
+                const params = "hourly=temperature_2m,weathercode&timezone=Australia%2FSydney&forecast_days=1";
+                const fetches = Object.keys(locations).map(key => 
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locations[key].lat}&longitude=${locations[key].lon}&${params}`).then(res => res.json())
+                );
+                
+                const results = await Promise.all(fetches);
+                const weatherData = {};
+                Object.keys(locations).forEach((key, index) => {
+                    weatherData[key] = results[index].hourly;
+                });
+
+                const getWeatherHtml = (locKey) => {
+                    const data = weatherData[locKey];
+                    if (!data) return '';
+                    
+                    const locName = locations[locKey].name;
+                    const now = new Date();
+                    const currentHour = now.getHours();
+                    
+                    let hourlyCardsHtml = '';
+                    for (let i = currentHour; i < Math.min(currentHour + 8, 24); i++) {
+                        const temp = Math.round(data.temperature_2m[i]);
+                        const code = data.weathercode[i];
+                        const codeInfo = weatherCodes[code] || { desc: '未知', icon: 'fa-cloud', color: 'text-gray-400' };
+                        const timeStr = i === currentHour ? '現在' : `${i}:00`;
+                        const bgClass = i === currentHour ? 'bg-sky-500 text-white border-sky-600' : 'bg-white text-dark border-gray-100';
+                        const iconColor = i === currentHour ? 'text-white' : codeInfo.color;
+                        const tempColor = i === currentHour ? 'text-white' : 'text-gray-800';
+                        const timeColor = i === currentHour ? 'text-sky-100' : 'text-gray-400';
+
+                        hourlyCardsHtml += `
+                            <div class="flex-none flex flex-col items-center justify-center p-2.5 rounded-2xl border shadow-sm min-w-[64px] ${bgClass} transition-transform hover:scale-105">
+                                <span class="text-[10px] font-bold mb-1.5 ${timeColor}">${timeStr}</span>
+                                <i class="fa-solid ${codeInfo.icon} ${iconColor} text-lg mb-1.5 drop-shadow-sm"></i>
+                                <span class="text-sm font-black ${tempColor} tracking-tighter">${temp}°</span>
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div class="bg-gradient-to-br from-sky-50/80 to-blue-50/50 rounded-3xl p-4 mb-5 border border-sky-100 shadow-sm backdrop-blur-md">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="bg-white/80 p-2 rounded-xl shadow-sm mr-2 flex items-center justify-center border border-gray-100">
+                                        <i class="fa-solid fa-location-dot text-sky-500"></i>
+                                    </div>
+                                    <p class="text-sm font-bold text-gray-800 tracking-wide">${locName} <span class="text-xs font-normal text-gray-500 ml-1">今日預報</span></p>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3 overflow-x-auto pb-2 pt-1 hide-scrollbar -mx-2 px-2">
+                                ${hourlyCardsHtml}
+                            </div>
+                        </div>
+                    `;
+                };
+
+                document.querySelectorAll('.day-content').forEach(dayEl => {
+                    const dayId = dayEl.id;
+                    if (!dayId) return;
+                    const dayNum = parseInt(dayId.split('-')[1]);
+                    
+                    let locKey = 'sydney';
+                    if (dayNum === 3) locKey = 'katoomba';
+                    else if (dayNum === 4) locKey = 'hunter';
+                    else if (dayNum === 5 || dayNum === 6) locKey = 'kiama';
+                    
+                    const gridEl = dayEl.querySelector('.grid');
+                    if (gridEl) {
+                        gridEl.insertAdjacentHTML('beforebegin', getWeatherHtml(locKey));
+                    }
+                });
+
+            } catch (err) {
+                console.error('Failed to fetch weather:', err);
+            }
+        }
+
+        // === 初始化運行 ===
+        window.onload = () => {
+            switchTab('home');
+            initCountdown();
+            renderChecklist();
+            initNavigation();
+            initWeather();
+        };
+
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
