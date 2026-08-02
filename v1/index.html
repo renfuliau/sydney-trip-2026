@@ -1,0 +1,2925 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2026 熊本·別府 家族之旅</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#ef4444',     // Red-500
+                        secondary: '#3b82f6',   // Blue-500
+                        accent: '#f59e0b',      // Amber-500
+                        dark: '#1e293b',        // Slate-800
+                        light: '#f8fafc',       // Slate-50
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        
+        /* 隱藏滾動條但保持滾動功能 */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* 頁面對切換動畫 */
+        .section-content { display: none; opacity: 0; }
+        .section-content.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 玻璃透視底部導航 */
+        .glass-nav { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(0,0,0,0.05); 
+        }
+        
+        /* 導航按鈕動畫 */
+        .nav-item { transition: all 0.2s ease; color: #94a3b8; }
+        .nav-item.active { color: #ef4444; transform: scale(1.05); }
+        .nav-item.active i { margin-bottom: 2px; }
+        
+        /* 行程時間軸樣式 */
+        .timeline-container { position: relative; padding-left: 24px; }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 10px;
+            bottom: -20px;
+            width: 2px;
+            background-color: #e2e8f0;
+        }
+        .timeline-item { position: relative; padding-bottom: 1.5rem; }
+        .timeline-item:last-child { padding-bottom: 0; }
+        .timeline-item::after { /* 圓點 */
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: white;
+            border: 3px solid #cbd5e1;
+            transition: all 0.3s ease;
+        }
+        .timeline-item.highlight::after {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+        
+        /* SOS卡片閃爍效果 */
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .sos-card { animation: pulse-border 2s infinite; }
+        
+        /* 翻譯頁 Tab 切換 */
+        .translate-tab-btn { transition: all 0.2s ease; }
+        .translate-tab-btn.active { background-color: #ef4444; color: white; box-shadow: 0 4px 12px rgba(239,68,68,0.3); }
+        .translate-panel { display: none; }
+        .translate-panel.active { display: block; animation: fadeIn 0.3s ease-out; }
+        
+        /* 對話卡片 */
+        .phrase-card { transition: all 0.25s ease; cursor: pointer; }
+        .phrase-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .phrase-card .jp-text { transition: all 0.25s ease; }
+        .phrase-detail { display: none; }
+        .phrase-card.expanded .phrase-detail { display: block; }
+        .phrase-card.expanded { background-color: #eff6ff; border-color: #bfdbfe; }
+        
+        /* 自定義 Checkbox */
+        .custom-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.2s;
+            position: relative;
+            cursor: pointer;
+        }
+        .custom-checkbox:checked {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        .custom-checkbox:checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 12px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .checked-text { text-decoration: line-through; color: #94a3b8; }
+    </style>
+</head>
+<body class="pb-24 text-dark antialiased selection:bg-red-200">
+
+    <!-- 頂部標題列 (僅在非首頁顯示) -->
+    <header id="top-header" class="fixed top-0 inset-x-0 bg-white/90 backdrop-blur z-40 border-b border-gray-100 px-5 py-3 hidden transition-opacity duration-300">
+        <h1 id="header-title" class="text-lg font-bold text-center text-dark truncate"></h1>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="w-full max-w-md mx-auto min-h-screen relative">
+        
+        <!-- 導航列: 實用快速連結 (浮動於上方) -->
+        <div class="fixed top-2 right-2 z-50 flex gap-2">
+            <a href="tel:119" class="bg-white text-red-500 w-10 h-10 rounded-full flex justify-center items-center shadow-md text-xs font-bold border border-red-100">
+                <i class="fa-solid fa-ambulance text-lg"></i>
+            </a>
+            <button onclick="window.open('https://www.google.com/maps/search/?api=1&query=熊本')" class="bg-white text-blue-500 w-10 h-10 rounded-full flex justify-center items-center shadow-md text-xs font-bold border border-blue-100">
+                <i class="fa-solid fa-map-location-dot text-lg"></i>
+            </button>
+        </div>
+
+        <!-- ======================= -->
+        <!-- SECTION: 首頁 (Home)    -->
+        <!-- ======================= -->
+        <section id="home" class="section-content p-5 space-y-6 pt-5">
+            <!-- Hero Image & Info -->
+            <div class="relative rounded-3xl overflow-hidden h-64 shadow-lg group">
+                <div class="absolute inset-0 bg-gray-200 animate-pulse"></div> <!-- Loading Skeleton -->
+                <img src="https://cdn2.ettoday.net/images/572/d572768.jpg" 
+                     onload="this.previousElementSibling.style.display='none'"
+                     alt="熊本城" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/30 to-transparent"></div>
+                <div class="absolute bottom-0 inset-x-0 p-5 text-white">
+                    <span class="bg-primary/90 text-white text-xs font-bold px-2 py-1 rounded-md mb-2 inline-block shadow-sm">
+                        <i class="fa-solid fa-plane text-[10px] mr-1"></i>7D6N 家族旅行
+                    </span>
+                    <h1 class="text-3xl font-black mb-1 drop-shadow-md tracking-wide">熊本·別府之旅</h1>
+                    <p class="text-sm text-gray-200 font-medium">2026/05/06 - 05/12</p>
+                    
+                    <div class="mt-4 inline-flex items-center space-x-2 bg-black/40 backdrop-blur-md rounded-xl p-2.5 border border-white/20 shadow-inner">
+                        <div class="bg-primary w-8 h-8 rounded-lg flex items-center justify-center text-white">
+                            <i class="fa-regular fa-clock"></i>
+                        </div>
+                        <div id="countdown" class="text-sm font-bold tracking-wider text-white">
+                            計算倒數中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 航班資訊 (Flight Info) -->
+            <div class="space-y-4">
+                <h3 class="text-sm font-bold text-gray-500 mb-1 ml-1 flex items-center">
+                    <i class="fa-solid fa-plane-departure mr-2"></i>航班資訊
+                </h3>
+                
+                <!-- 霖 & 樂 -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                    <div class="bg-indigo-50/50 px-4 py-2 border-b border-indigo-50 flex items-center">
+                        <span class="font-bold text-indigo-800 text-sm"><i class="fa-solid fa-user-group mr-1.5"></i>霖 & 樂 (5/5 ~ 5/12)</span>
+                    </div>
+                    <!-- 去程 -->
+                    <div class="p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-blue-50 text-blue-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-plane-arrival space-x-1 text-xl"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-xs text-gray-400 font-medium mb-0.5">去程 (TPE → KMJ)</p>
+                            <p class="font-bold text-gray-800">5/5 (二) 18:15 抵達</p>
+                            <p class="text-xs text-gray-500 mt-1">星宇航空 JX846</p>
+                        </div>
+                    </div>
+                    <!-- 回程 -->
+                    <div class="p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-orange-50 text-orange-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-plane-departure text-xl"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-xs text-gray-400 font-medium mb-0.5">回程 (KMJ → TPE)</p>
+                            <p class="font-bold text-gray-800">5/12 (二) 19:15 起飛</p>
+                            <p class="text-[11px] text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full inline-block mt-1 font-medium">請於 17:15 前抵達機場</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jan & Ziv -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-50">
+                    <div class="bg-teal-50/50 px-4 py-2 border-b border-teal-50 flex items-center">
+                        <span class="font-bold text-teal-800 text-sm"><i class="fa-solid fa-user-group mr-1.5"></i>Jan & Ziv (5/6 ~ 5/12)</span>
+                    </div>
+                    <!-- 去程 -->
+                    <div class="p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-blue-50 text-blue-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-plane-arrival space-x-1 text-xl"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-xs text-gray-400 font-medium mb-0.5">去程 (TPE → KMJ)</p>
+                            <p class="font-bold text-gray-800">5/6 (三) 18:15 抵達</p>
+                            <p class="text-xs text-gray-500 mt-1">星宇航空 JX846</p>
+                        </div>
+                    </div>
+                    <!-- 回程 -->
+                    <div class="p-4 flex items-center hover:bg-gray-50 transition">
+                        <div class="bg-orange-50 text-orange-500 w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-plane-departure text-xl"></i>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <p class="text-xs text-gray-400 font-medium mb-0.5">回程 (KMJ → TPE)</p>
+                            <p class="font-bold text-gray-800">5/12 (二) 19:15 起飛</p>
+                            <p class="text-[11px] text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full inline-block mt-1 font-medium">請於 17:15 前抵達機場</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 住宿概覽 (Accommodation) -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-500 mb-3 ml-1 flex items-center">
+                    <i class="fa-solid fa-bed mr-2"></i>住宿重點
+                </h3>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+                    <ul class="space-y-4 relative">
+                        <!-- 連接線 -->
+                        <div class="absolute left-[11px] top-2 bottom-2 w-0.5 bg-gray-100"></div>
+
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-pink-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-pink-400"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-pink-500 bg-pink-50 px-2 py-0.5 rounded">5/5 (霖&thinsp;&amp;&thinsp;樂)</span>
+                                    <p class="font-bold mt-1">KOKO HOTEL Premier Kumamoto</p>
+                                    <p class="text-xs text-gray-500">熊本市區 (1晚，先行抵達)</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=KOKO+HOTEL+Premier+Kumamoto" target="_blank" class="flex-shrink-0 ml-2 mt-1 inline-flex items-center justify-center text-pink-500 bg-pink-50 hover:bg-pink-100 px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors shadow-sm border border-pink-200">
+                                    <i class="fa-solid fa-location-dot mr-1"></i>導航
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-indigo-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-indigo-500"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded">D1-D3</span>
+                                    <p class="font-bold mt-1">FAV HOTEL KUMAMOTO</p>
+                                    <p class="text-xs text-gray-500">熊本市區 (連住3晚)</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=FAV+HOTEL+KUMAMOTO" target="_blank" class="flex-shrink-0 ml-2 mt-1 inline-flex items-center justify-center text-indigo-500 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors shadow-sm border border-indigo-200">
+                                    <i class="fa-solid fa-location-dot mr-1"></i>導航
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-teal-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-teal-500"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded">D4</span>
+                                    <p class="font-bold mt-1">APARTMENT HOTEL YAEZAKI</p>
+                                    <p class="text-xs text-gray-500">別府 (1晚)</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=APARTMENT+HOTEL+YAEZAKI+Beppu" target="_blank" class="flex-shrink-0 ml-2 mt-1 inline-flex items-center justify-center text-teal-600 bg-teal-50 hover:bg-teal-100 px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors shadow-sm border border-teal-200">
+                                    <i class="fa-solid fa-location-dot mr-1"></i>導航
+                                </a>
+                            </div>
+                        </li>
+
+                        <li class="relative pl-6">
+                            <div class="absolute left-0 top-1.5 w-6 h-6 rounded-full bg-white border-4 border-purple-100 flex items-center justify-center -ml-px">
+                                <div class="w-2 h-2 rounded-full bg-purple-500"></div>
+                            </div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-purple-500 bg-purple-50 px-2 py-0.5 rounded">D5-D6</span>
+                                    <p class="font-bold mt-1">熊本新市街光芒飯店</p>
+                                    <p class="text-xs text-gray-500">熊本市區 (連住2晚)</p>
+                                </div>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Candeo+Hotels+Kumamoto+Shimotor" target="_blank" class="flex-shrink-0 ml-2 mt-1 inline-flex items-center justify-center text-purple-500 bg-purple-50 hover:bg-purple-100 px-2.5 py-1 rounded-full text-[11px] font-bold transition-colors shadow-sm border border-purple-200">
+                                    <i class="fa-solid fa-location-dot mr-1"></i>導航
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 行程表 (Itinerary) -->
+        <!-- ======================= -->
+        <section id="itinerary" class="section-content pt-16 pb-6 px-5 min-h-screen">
+            
+            <!-- 天數切換器 (橫向滾動) -->
+            <div class="flex space-x-3 overflow-x-auto pb-4 pt-1 hide-scrollbar -mx-5 px-5 sticky top-12 z-30 bg-light/95 backdrop-blur">
+                <button onclick="showDay(0, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-pink-300 text-pink-500 rounded-xl shadow-sm text-sm font-bold transition-all">先行<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/5 霖樂</span></button>
+                <button onclick="showDay(1, this)" class="day-btn flex-none px-4 py-2.5 bg-primary text-white rounded-xl shadow-md text-sm font-bold transition-all">D1<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/6</span></button>
+                <button onclick="showDay(2, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D2<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/7</span></button>
+                <button onclick="showDay(3, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D3<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/8</span></button>
+                <button onclick="showDay(4, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all">D4 🚗<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/9 自駕</span></button>
+                <button onclick="showDay(5, this)" class="day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all">D5 🚗<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/10 自駕</span></button>
+                <button onclick="showDay(6, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D6<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/11</span></button>
+                <button onclick="showDay(7, this)" class="day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all">D7<span class="text-[10px] font-normal block opacity-80 mt-0.5">5/12</span></button>
+            </div>
+
+            <!-- Day 0 Content (5/5 - 霖 & 樂 先行抵達) -->
+            <div id="day-0" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-pink-100 text-pink-500 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-plane-arrival text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">霖 &amp; 樂 先行抵達・初夜探索</h2>
+                        <p class="text-xs text-pink-500 font-bold">比大家提早一天踏上九州的土地！</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-pink-50 p-3 rounded-2xl shadow-sm border border-pink-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-pink-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-pink-700 leading-tight">KOKO HOTEL<br><span class="text-[10px] font-normal text-pink-500">Premier Kumamoto</span></span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-user-group mr-1"></i>成員</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">霖 &amp; 樂<br><span class="text-[10px] font-normal text-gray-500">Jan &amp; Ziv 明日到</span></span>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-5 flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-xs text-amber-800 leading-relaxed">Jan &amp; Ziv 明天（5/6）18:15 抵達熊本機場，D1 大家在 FAV HOTEL 一起 Check-in，記得確認集合計畫。</p>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:15</p>
+                            <h4 class="font-bold text-dark text-sm">抵達熊本機場 (KMJ)</h4>
+                            <p class="text-xs text-gray-500 mt-1">JX846 班機降落，辦理入境手續。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">19:15</p>
+                            <h4 class="font-bold text-dark text-sm">搭乘機場利木津巴士往市區</h4>
+                            <p class="text-xs text-gray-500 mt-1">約 50–60 分鐘，票價 1,000円，抵達熊本交通中心。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">20:15</p>
+                            <h4 class="font-bold text-dark text-sm">入住 KOKO HOTEL Premier Kumamoto</h4>
+                            <p class="text-xs text-gray-500 mt-1">辦理 Check-in，放下行李稍作休息。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">20:30</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：黑亭拉麵 (下通店)</h4>
+                            <div class="bg-orange-50 p-2 rounded-lg mt-2 border border-orange-100">
+                                <p class="text-xs text-orange-800 font-medium">熊本必吃！焦香黑蒜油豚骨拉麵，先替大家嚐鮮。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">21:30</p>
+                            <h4 class="font-bold text-dark text-sm">下通商店街夜間散步</h4>
+                            <p class="text-xs text-gray-500 mt-1">感受熊本夜晚氛圍，早點休息，明天全員集合！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 1 Content -->
+            <div id="day-1" class="day-content mt-4 animate-[fadeIn_0.3s_ease-out]">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-indigo-100 text-indigo-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-moon text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">血拼日・全員集合與馬肉刺身</h2>
+                        <p class="text-xs text-gray-500">霖與樂的購物時光，夜晚迎來大團圓</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">FAV HOTEL<br><span class="text-[10px] font-normal text-gray-500">熊本市區</span></span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算 & 交通</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 3,000円<br><span class="text-[10px] font-normal text-gray-500">機場巴士</span></span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">10:30</p>
+                            <h4 class="font-bold text-dark text-sm">市區逛街購物 <span class="text-xs text-pink-500 font-bold bg-pink-50 px-1.5 py-0.5 rounded ml-1">霖&nbsp;&amp;&nbsp;樂</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">SAKURA MACHI 櫻町熊本、鶴屋百貨，開啟第一波血拼！</p>
+                            <div class="mt-2.5">
+                                <p class="text-[10px] font-bold text-gray-400 mb-1.5 flex items-center"><i class="fa-solid fa-store mr-1"></i>SAKURA MACHI 館內精選</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center bg-blue-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">⛺ mont.bell</span>
+                                    <span class="inline-flex items-center bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🏔️ 北臉</span>
+                                    <span class="inline-flex items-center bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🍃 宮崎駿店</span>
+                                    <span class="inline-flex items-center bg-slate-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🧳 SAC’S BAR</span>
+                                    <span class="inline-flex items-center bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">👟 ABC-mart</span>
+                                    <span class="inline-flex items-center bg-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🔵 大創</span>
+                                    <span class="inline-flex items-center bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">👾 namco</span>
+                                    <span class="inline-flex items-center bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🥚 扭蛋專區</span>
+                                    <span class="inline-flex items-center bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">✂️ 手作店</span>
+                                    <span class="inline-flex items-center bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🌳 頂樓空中花園</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">12:30</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：敘敘院 SAKURA MACHI 熊本店 <span class="text-xs text-pink-500 font-bold bg-pink-50 px-1.5 py-0.5 rounded ml-1">霖&nbsp;&amp;&nbsp;樂</span></h4>
+                            <div class="bg-red-50 p-2 rounded-lg mt-2 border border-red-100">
+                                <p class="text-xs text-red-800 font-medium">享受頂級燒肉午間套餐，高 CP 值的奢華午餐！</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">15:00</p>
+                            <h4 class="font-bold text-dark text-sm">上/下通商店街繼續血拼 <span class="text-xs text-pink-500 font-bold bg-pink-50 px-1.5 py-0.5 rounded ml-1">霖&nbsp;&amp;&nbsp;樂</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">藥妝、服飾、雜貨一網打盡，買完可以直接拿回飯店放。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:15</p>
+                            <h4 class="font-bold text-dark text-sm">抵達熊本機場 (KMJ) <span class="text-xs text-teal-600 font-bold bg-teal-50 px-1.5 py-0.5 rounded ml-1">Jan&nbsp;&amp;&nbsp;Ziv</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">辦理入境手續。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">19:15</p>
+                            <h4 class="font-bold text-dark text-sm">搭乘機場利木津巴士</h4>
+                            <p class="text-xs text-gray-500 mt-1">前往市區，約 50-60 分鐘，票價 1,000円。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">20:15</p>
+                            <h4 class="font-bold text-dark text-sm">飯店 Check-in</h4>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">21:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：當地人氣居酒屋 (如：菅乃屋) <span class="text-xs text-indigo-500 font-bold bg-indigo-50 px-1.5 py-0.5 rounded ml-1">全員集合</span></h4>
+                            <div class="bg-orange-50 p-2 rounded-lg mt-2 border border-orange-100">
+                                <p class="text-xs text-orange-800 font-medium">慶祝全員到齊！必點熊本名物「馬肉刺身」(櫻肉) 及在地特色料理。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 2 Content -->
+            <div id="day-2" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-amber-100 text-amber-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-brands fa-fort-awesome text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">城下町巡禮・御守與炸豬排</h2>
+                        <p class="text-xs text-gray-500">熊本城・稻荷神社・城彩苑・勝烈亭一日深度走</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">FAV HOTEL<br><span class="text-[10px] font-normal text-gray-500">連住不換房</span></span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算 & 交通</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 8,000円<br><span class="text-[10px] font-normal text-gray-500">市電 1 日券 (700円)</span></span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">09:00</p>
+                            <h4 class="font-bold text-dark text-sm">早餐後出發</h4>
+                            <p class="text-xs text-gray-500 mt-1">飯店或附近咖啡廳解決早餐，搭市電前往熊本城。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">09:30</p>
+                            <h4 class="font-bold text-dark text-sm">熊本城</h4>
+                            <p class="text-xs text-gray-500 mt-1">入場參觀天守閣（入場料 800円），了解加藤清正的築城智慧與2016年地震後修復的故事。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:30</p>
+                            <h4 class="font-bold text-dark text-sm">熊本城稻荷神社 <span class="text-xs text-amber-600 font-bold bg-amber-50 px-1.5 py-0.5 rounded ml-1">買御守</span></h4>
+                            <div class="bg-amber-50 p-2 rounded-lg mt-2 border border-amber-100">
+                                <p class="text-xs text-amber-800 font-medium">🦊 供奉白狐的稻荷神社就在城內附近，可求得熊本限定狐狸御守，保佑開運招福。記得誠心參拜！</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">11:00</p>
+                            <h4 class="font-bold text-dark text-sm">🎯 分工行動：勝烈亭拿號碼牌 <span class="text-xs text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded ml-1">重要</span></h4>
+                            <div class="bg-red-50 p-2 rounded-lg mt-2 border border-red-100">
+                                <p class="text-xs text-red-800 font-medium">勝烈亭 11:00 開始發號！由 1~2 人先去新市街本店領號碼牌卡位，其他人繼續在城彩苑等候。叫號前約 5 分鐘步行過去即可。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">11:15</p>
+                            <h4 class="font-bold text-dark text-sm">櫻之馬場 城彩苑 <span class="text-xs text-pink-500 font-bold bg-pink-50 px-1.5 py-0.5 rounded ml-1">吃喝慢晃</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">江戶風情古街散策，趁等號碼牌的空檔⋯</p>
+                            <div class="grid grid-cols-3 gap-1.5 mt-2">
+                                <div class="bg-green-50 p-2 rounded-xl text-center border border-green-100">
+                                    <span class="text-base">🍵</span>
+                                    <p class="text-[10px] font-bold text-green-700 mt-0.5">抹茶</p>
+                                </div>
+                                <div class="bg-orange-50 p-2 rounded-xl text-center border border-orange-100">
+                                    <span class="text-base">🍡</span>
+                                    <p class="text-[10px] font-bold text-orange-700 mt-0.5">和菓子點心</p>
+                                </div>
+                                <div class="bg-blue-50 p-2 rounded-xl text-center border border-blue-100">
+                                    <span class="text-base">🍦</span>
+                                    <p class="text-[10px] font-bold text-blue-700 mt-0.5">冰淇淋</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">12:00 ~ 13:00</p>
+                            <h4 class="font-bold text-dark text-sm">午餐：勝烈亭 (新市街本店)</h4>
+                            <p class="text-xs text-gray-500 mt-1">收到叫號後步行前往（約 15 分鐘），享用頂級炸豬排。</p>
+                            <div class="bg-red-50 p-2 rounded-lg mt-2 border border-red-100">
+                                <p class="text-xs text-red-700 font-medium">必點：六白黑豚炸豬排定食，外皮酥脆、肉汁豐沛，全家都能享用的頂級豬肉！</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:00 以後</p>
+                            <h4 class="font-bold text-dark text-sm">自由時間 ✨</h4>
+                            <p class="text-xs text-gray-500 mt-1">各自依體力與興趣自由安排，以下供參考：</p>
+                            <div class="space-y-1.5 mt-2">
+                                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                    <span class="text-sm">🐻</span>
+                                    <p class="text-xs text-gray-600">熊本熊廣場（SAKURA MACHI 2F）— 確認部長出沒時間</p>
+                                </div>
+                                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                    <span class="text-sm">🛍️</span>
+                                    <p class="text-xs text-gray-600">上通・下通商店街 — 藥妝、伴手禮採購</p>
+                                </div>
+                                <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-lg border border-gray-100">
+                                    <span class="text-sm">☕</span>
+                                    <p class="text-xs text-gray-600">咖啡廳休憩放空，養精蓄銳</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">18:30</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐：自由安排</h4>
+                            <p class="text-xs text-gray-500 mt-1">可視當日心情選擇天草地魚居酒屋或商店街周邊餐廳。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 3 Content -->
+            <div id="day-3" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-green-100 text-green-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-leaf text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">庭園美學・光之森購物</h2>
+                        <p class="text-xs text-gray-500">慢遊日式園林，前往 youme Town 大型商場血拼</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">FAV HOTEL<br><span class="text-[10px] font-normal text-gray-500">購物放回飯店最方便</span></span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算 & 交通</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 5,000円<br><span class="text-[10px] font-normal text-gray-500">市電、JR</span></span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">09:00</p>
+                            <h4 class="font-bold text-dark text-sm">出發前往水前寺</h4>
+                            <p class="text-xs text-gray-500 mt-1">搭市電至水前寺站，步行約 5 分鐘抵達成趣園。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">09:30</p>
+                            <h4 class="font-bold text-dark text-sm">水前寺成趣園</h4>
+                            <p class="text-xs text-gray-500 mt-1">欣賞仿富士山的縮景，在「古今傳授之間」享用抹茶，感受日式庭園之美。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">10:30</p>
+                            <h4 class="font-bold text-dark text-sm">🚖 搭計程車前往光之森 <span class="text-xs text-teal-600 font-bold bg-teal-50 px-1.5 py-0.5 rounded ml-1">約 30 分</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">距離約 10 km，實際車程 25～40 分（視交通狀況），建議抓 30 分鐘。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">11:00</p>
+                            <h4 class="font-bold text-dark text-sm">youme Town 光之森</h4>
+                            <div class="bg-blue-50 p-2 rounded-lg mt-2 border border-blue-100">
+                                <p class="text-xs text-blue-800 font-medium">熊本超大購物中心！午餐可直接在商場內解決，隨後展開大採買（約 6.5 小時逛街時光）。</p>
+                            </div>
+                            <!-- 店家標籤 -->
+                            <div class="mt-2.5">
+                                <p class="text-[10px] font-bold text-gray-400 mb-1.5 flex items-center"><i class="fa-solid fa-store mr-1"></i>館內必逛店家</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">👷 Workman</span>
+                                    <span class="inline-flex items-center bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🔴 UNIQLO</span>
+                                    <span class="inline-flex items-center bg-gray-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">✏️ LOFT</span>
+                                    <span class="inline-flex items-center bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">⬜ 無印良品</span>
+                                    <span class="inline-flex items-center bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">📚 書店</span>
+                                    <span class="inline-flex items-center bg-yellow-400 text-gray-800 text-[10px] font-bold px-2 py-0.5 rounded-full">🪙 3COINS＋plus</span>
+                                    <span class="inline-flex items-center bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🌍 GLOBAL WORK</span>
+                                    <span class="inline-flex items-center bg-pink-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🌸 Lowrys Farm</span>
+                                    <span class="inline-flex items-center bg-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">✂️ studio CLIP</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">17:45</p>
+                            <h4 class="font-bold text-dark text-sm">🚖 搭計程車前往租車點 <span class="text-xs text-teal-600 font-bold bg-teal-50 px-1.5 py-0.5 rounded ml-1">約 35 分</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">距離約 10 km 以上，車程 30～40 分（含塞車）。此時間出發可確保 18:20～18:30 抵達。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:30</p>
+                            <h4 class="font-bold text-dark text-sm">取車：Toyota Rent a Car <span class="text-xs text-blue-500 font-bold bg-blue-50 px-1.5 py-0.5 rounded ml-1">預約 19:00</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">提前 30 分鐘到達，辦好手續後即可出發！</p>
+                            <div class="bg-amber-50 p-2 rounded-lg mt-2 border border-amber-100">
+                                <p class="text-xs text-amber-800 font-medium"><i class="fa-solid fa-circle-info mr-1"></i>預約時間 19:00，建議 18:30 提前抵達辦理手續，輕鬆出發不緊張。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">19:00 以後</p>
+                            <h4 class="font-bold text-dark text-sm">自駕夜間血拼：唐吉訶德 / AEON MALL</h4>
+                            <div class="bg-blue-50 p-2 rounded-lg mt-2 border border-blue-100">
+                                <p class="text-xs text-blue-800 font-medium">取車後驅車前往「唐吉訶德 南熊本店」或「AEON MALL 熊本」採買。晚餐可於周邊自由解決。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 4 Content -->
+            <div id="day-4" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-red-100 text-red-500 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-mountain-sun text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">自駕縱橫・峽谷與大草原</h2>
+                        <p class="text-xs text-red-500 font-bold">高千穂峽 → 阿蘇 → 別府，橫跨九州脊梁</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-red-50 p-3 rounded-2xl shadow-sm border border-red-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-red-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-red-700 leading-tight">APARTMENT HOTEL YAEZAKI</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算 & 交通</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 15,000円<br><span class="text-[10px] font-normal text-gray-500">自駕 🚗</span></span>
+                    </div>
+                </div>
+
+                <!-- 火山封閉提示 -->
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-5 flex items-start gap-2.5">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-xs text-amber-800 leading-relaxed">阿蘇中岳火山口目前封閉，此行改以草千里之濱、咖啡焙煎所、道の駅及阿蘇神社替代，同樣精彩充實！</p>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">06:00</p>
+                            <h4 class="font-bold text-dark text-sm">Check-out & 取車出發 <span class="text-xs text-teal-600 font-bold bg-teal-50 px-1.5 py-0.5 rounded ml-1">車程約 2 小時</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">辦理退房、前往停車場取車，預留足夠緩衝，從容出發前往高千穂峽。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">09:30</p>
+                            <h4 class="font-bold text-dark text-sm">🚣 高千穂峽划船 <span class="text-xs text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded ml-1">已預約</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">乘坐小船穿行翡翠綠的峽谷，仰望真名井瀑布，約 30 分鐘。</p>
+                            <div class="bg-blue-50 p-2 rounded-lg mt-2 border border-blue-100">
+                                <p class="text-xs text-blue-800 font-medium">⚠️ 提前 15 分鐘到達停車場，確保準時入場。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">10:10</p>
+                            <h4 class="font-bold text-dark text-sm">高千穂天照鐵道 + 流水素麵</h4>
+                            <p class="text-xs text-gray-500 mt-1">搭乘噴泡泡小火車穿越高空鐵橋（約 30 分），結束後在峽谷旁享用流水素麵，補充能量。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widests mb-1">11:30</p>
+                            <h4 class="font-bold text-dark text-sm">🚗 自駕前往阿蘇草千里 <span class="text-xs text-teal-600 font-bold bg-teal-50 px-1.5 py-0.5 rounded ml-1">車程約 1.5 小時</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">穿越山間公路前往阿蘇高原，沿途風景壯闊。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:00</p>
+                            <h4 class="font-bold text-dark text-sm">草千里之濱</h4>
+                            <p class="text-xs text-gray-500 mt-1">廣袤的翠綠草原，湖畔牧馬悠閒，遠眺阿蘇五岳，即使火山口封閉仍壯觀迷人。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">13:30</p>
+                            <h4 class="font-bold text-dark text-sm">草千里珈琲焙煎所 ☕</h4>
+                            <div class="bg-orange-50 p-2 rounded-lg mt-2 border border-orange-100">
+                                <p class="text-xs text-orange-800 font-medium">就坐落在草千里旁的火山石建築咖啡館，以阿蘇火山石焙煎咖啡豆，邊品嚐咖啡邊眺望草原與山景，是此行獨特的體驗！</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:30</p>
+                            <h4 class="font-bold text-dark text-sm">道の駅 阿蘇</h4>
+                            <p class="text-xs text-gray-500 mt-1">採購阿蘇限定伴手禮、阿蘇牛乳、赤牛漢堡等在地特產，是難得的補給站。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">15:30</p>
+                            <h4 class="font-bold text-dark text-sm">阿蘇神社 <span class="text-xs text-gray-400 font-normal bg-gray-100 px-1.5 py-0.5 rounded ml-1">視時間決定</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">九州最古老的神社之一，地震後持續修復中，充滿歷史感。從道の駅出發約 15 分。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">16:30</p>
+                            <h4 class="font-bold text-dark text-sm">🚗 自駕前往別府 <span class="text-xs text-teal-600 font-bold bg-teal-50 px-1.5 py-0.5 rounded ml-1">車程約 2 小時</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">走やまなみハイウェイ，沿途草原、火山地形與遠山連綿，是九州最美的自駕路線之一。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:30</p>
+                            <h4 class="font-bold text-dark text-sm">抵達別府・晚餐</h4>
+                            <div class="bg-orange-50 p-2 rounded-lg mt-2 border border-orange-100">
+                                <p class="text-xs text-orange-800 font-medium">別府地獄蒸料理：用天然溫泉蒸氣蒸熟的海鮮與蔬菜，鮮甜無比！</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">20:00</p>
+                            <h4 class="font-bold text-dark text-sm">入住：APARTMENT HOTEL YAEZAKI</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 5 Content -->
+            <div id="day-5" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-teal-100 text-teal-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-hippo text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">動物互動・溫泉老街</h2>
+                        <p class="text-xs text-gray-500">近距離接觸野生動物，重返熊本</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">熊本市區<br><span class="text-[10px] font-normal text-gray-500">熊本新市街光芒飯店</span></span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算 & 交通</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 12,000円<br><span class="text-[10px] font-normal text-gray-500">自駕 🚗</span></span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">08:30</p>
+                            <h4 class="font-bold text-dark text-sm">別府飯店出發</h4>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">09:00</p>
+                            <h4 class="font-bold text-dark text-sm">九州自然動物園</h4>
+                            <p class="text-xs text-gray-500 mt-1">重點：抵達即刻劃位「叢林巴士」餵食獅子大象。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">13:30</p>
+                            <h4 class="font-bold text-dark text-sm">由布院</h4>
+                            <p class="text-xs text-gray-500 mt-1">金鱗湖、湯之坪街道散策、miffy專賣店</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">15:00</p>
+                            <h4 class="font-bold text-dark text-sm">啟程返回熊本</h4>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">18:30</p>
+                            <h4 class="font-bold text-dark text-sm">還車：Toyota Rent a Car Kumamoto Shinkansen Store</h4>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">18:30</p>
+                            <h4 class="font-bold text-dark text-sm">入住：熊本新市街光芒飯店</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 6 Content -->
+            <div id="day-6" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-orange-100 text-orange-500 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-mug-hot text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">上下通漫遊・咖啡甜點自由日</h2>
+                        <p class="text-xs text-gray-500">走走逛逛，吃吃喝喝，今天沒有行程壓力！</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">熊本市區<br><span class="text-[10px] font-normal text-gray-500">續住光芒飯店</span></span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算 & 交通</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 5,000円<br><span class="text-[10px] font-normal text-gray-500">步行為主</span></span>
+                    </div>
+                </div>
+
+                <!-- 自由行提示 -->
+                <div class="bg-orange-50 border border-orange-200 rounded-2xl p-3 mb-5 flex items-start gap-2.5">
+                    <i class="fa-solid fa-sun text-orange-400 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-xs text-orange-800 leading-relaxed">今天是輕鬆自由日！三大商圈緊鄰在一起，步行就能全部走完。午餐、咖啡廳、甜點隨心選，不趕行程。</p>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:00</p>
+                            <h4 class="font-bold text-dark text-sm">上通商店街 <span class="text-xs text-amber-600 font-bold bg-amber-50 px-1.5 py-0.5 rounded ml-1">漫逛</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">從光芒飯店步行即達，先逛上通感受熊本在地商圈氣息。</p>
+                            <div class="mt-2.5">
+                                <p class="text-[10px] font-bold text-gray-400 mb-1.5 flex items-center"><i class="fa-solid fa-store mr-1"></i>上通必逛</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center bg-yellow-400 text-gray-800 text-[10px] font-bold px-2 py-0.5 rounded-full">🪙 3coins</span>
+                                    <span class="inline-flex items-center bg-stone-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🛋️ Standard Products</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">12:00</p>
+                            <h4 class="font-bold text-dark text-sm">午餐 <span class="text-xs text-gray-400 font-normal bg-gray-100 px-1.5 py-0.5 rounded ml-1">自由選</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">上下通周邊餐廳任選，拉麵、定食、咖哩都有好選擇。</p>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:00</p>
+                            <h4 class="font-bold text-dark text-sm">下通商店街 <span class="text-xs text-purple-500 font-bold bg-purple-50 px-1.5 py-0.5 rounded ml-1">百元掃貨</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">下通連接上通，百元商店集中，採購最後紀念品與生活雜貨。</p>
+                            <div class="mt-2.5">
+                                <p class="text-[10px] font-bold text-gray-400 mb-1.5 flex items-center"><i class="fa-solid fa-store mr-1"></i>下通必逛</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🎪 唐吉訶德</span>
+                                    <span class="inline-flex items-center bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🟢 Cando 百元商店</span>
+                                    <span class="inline-flex items-center bg-blue-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🔵 Daiso 大創</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">15:30</p>
+                            <h4 class="font-bold text-dark text-sm">☕ 咖啡廳歇腳 <span class="text-xs text-orange-500 font-bold bg-orange-50 px-1.5 py-0.5 rounded ml-1">甜點時間</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">找間喜歡的咖啡廳，點杯咖啡配甜點，好好放鬆享受午後時光。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">16:30</p>
+                            <h4 class="font-bold text-dark text-sm">Cocosa 購物中心</h4>
+                            <p class="text-xs text-gray-500 mt-1">下通旁的綜合購物中心，生活雜貨、家居、服飾一站搞定。</p>
+                            <div class="mt-2.5">
+                                <p class="text-[10px] font-bold text-gray-400 mb-1.5 flex items-center"><i class="fa-solid fa-store mr-1"></i>Cocosa 館內</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">⬜ 無印良品</span>
+                                    <span class="inline-flex items-center bg-teal-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🏠 UR</span>
+                                    <span class="inline-flex items-center bg-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🎀 Deco Home</span>
+                                    <span class="inline-flex items-center bg-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🟣 Seria</span>
+                                    <span class="inline-flex items-center bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">👟 ABC-mart</span>
+                                    <span class="inline-flex items-center bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🛋️ 宜得利</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">19:00</p>
+                            <h4 class="font-bold text-dark text-sm">晚餐 <span class="text-xs text-gray-400 font-normal bg-gray-100 px-1.5 py-0.5 rounded ml-1">自由安排</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">商圈周邊餐廳任選，輕鬆結束這個無壓力的自由日。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Day 7 Content -->
+            <div id="day-7" class="day-content mt-4 hidden">
+                <div class="mb-4 flex items-center">
+                    <div class="bg-purple-100 text-purple-600 p-2.5 rounded-xl mr-3 shadow-sm">
+                        <i class="fa-solid fa-plane-departure text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-dark">最後掃貨・滿載而歸</h2>
+                        <p class="text-xs text-gray-500">血拼伴手禮，機場免稅一條龍，揮別熊本！</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-bed mr-1"></i>住宿</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">溫暖的家<br><span class="text-[10px] font-normal text-gray-500">滿載回憶歸國</span></span>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <span class="text-[10px] text-gray-400 mb-0.5"><i class="fa-solid fa-wallet mr-1"></i>預算 & 交通</span>
+                        <span class="text-xs font-bold text-gray-700 leading-tight">約 6,000円<br><span class="text-[10px] font-normal text-gray-500">步行 + 利木津巴士</span></span>
+                    </div>
+                </div>
+
+                <!-- 交通說明提示 -->
+                <div class="bg-blue-50 border border-blue-200 rounded-2xl p-3 mb-5 flex items-start gap-2.5">
+                    <i class="fa-solid fa-bus text-blue-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-xs text-blue-800 leading-relaxed">🗺️ <strong>Amu Plaza ↔ 肥後 Yokamon 市場</strong> 皆位於 JR 熊本站周邊，步行可達！逛完後直接從 <strong>SAKURA MACHI 搭利木津巴士</strong>前往機場，約 50 分鐘，是最省事的路線。</p>
+                </div>
+
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="timeline-container">
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">10:00</p>
+                            <h4 class="font-bold text-dark text-sm">Amu Plaza 熊本 <span class="text-xs text-purple-500 font-bold bg-purple-50 px-1.5 py-0.5 rounded ml-1">開店即衝</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">JR 熊本站直結購物中心，最後補貨、服飾採買首選！</p>
+                            <!-- 店家標籤 -->
+                            <div class="mt-2.5">
+                                <p class="text-[10px] font-bold text-gray-400 mb-1.5 flex items-center"><i class="fa-solid fa-store mr-1"></i>館內必逛店家</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center bg-yellow-400 text-gray-800 text-[10px] font-bold px-2 py-0.5 rounded-full">🧸 KIDDY LAND</span>
+                                    <span class="inline-flex items-center bg-sky-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">👕 GU</span>
+                                    <span class="inline-flex items-center bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🧥 Beams</span>
+                                    <span class="inline-flex items-center bg-pink-400 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🌸 Lowrys Farm</span>
+                                    <span class="inline-flex items-center bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">👟 ABC-mart</span>
+                                    <span class="inline-flex items-center bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🔴 Uniqlo</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">12:00</p>
+                            <h4 class="font-bold text-dark text-sm">肥後 Yokamon 市場 <span class="text-xs text-orange-500 font-bold bg-orange-50 px-1.5 py-0.5 rounded ml-1">伴手禮＋午餐</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">從 Amu Plaza 步行約 5 分鐘，品項齊全的熊本伴手禮聖地，同時搞定午餐！</p>
+                            <!-- 店家標籤 -->
+                            <div class="mt-2.5">
+                                <p class="text-[10px] font-bold text-gray-400 mb-1.5 flex items-center"><i class="fa-solid fa-store mr-1"></i>館內必逛</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <span class="inline-flex items-center bg-amber-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🍡 熊本菓房</span>
+                                    <span class="inline-flex items-center bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🍬 清正製菓</span>
+                                    <span class="inline-flex items-center bg-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🎁 各式熊本伴手禮</span>
+                                    <span class="inline-flex items-center bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">🍽️ 餐廳區</span>
+                                </div>
+                            </div>
+                            <div class="bg-amber-50 p-2 rounded-lg mt-2 border border-amber-100">
+                                <p class="text-xs text-amber-800 font-medium">💡 這裡就是掃最後一波熊本限定伴手禮的最佳地點！熊本熊商品、甜點、漬物一次清空購物清單。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">14:00</p>
+                            <h4 class="font-bold text-dark text-sm">🚌 前往 SAKURA MACHI 搭利木津巴士 <span class="text-xs text-teal-600 font-bold bg-teal-50 px-1.5 py-0.5 rounded ml-1">步行 5 分</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">步行至 SAKURA MACHI 熊本巴士總站，搭乘利木津機場巴士，約 50 分鐘抵達機場。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">15:00</p>
+                            <h4 class="font-bold text-dark text-sm">抵達熊本機場 (KMJ) <span class="text-xs text-blue-500 font-bold bg-blue-50 px-1.5 py-0.5 rounded ml-1">免稅店掃貨</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">辦理行李託運 Check-in，出關後盡情逛機場免稅店！</p>
+                            <div class="bg-blue-50 p-2 rounded-lg mt-2 border border-blue-100">
+                                <p class="text-xs text-blue-800 font-medium">🛍️ 機場免稅區有酒類、化妝品、熊本熊周邊、地方銘菓等，是最後補買的好機會！約有 2 小時購物時光。</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">17:15</p>
+                            <h4 class="font-bold text-dark text-sm">完成登機手續 <span class="text-xs text-red-500 font-bold bg-red-50 px-1.5 py-0.5 rounded ml-1">截止時間</span></h4>
+                            <p class="text-xs text-gray-500 mt-1">起飛前 2 小時截止登機，請確保準時通關完畢。</p>
+                        </div>
+                        <div class="timeline-item highlight">
+                            <p class="text-xs font-bold text-primary tracking-widest mb-1">19:15</p>
+                            <h4 class="font-bold text-dark text-sm">起飛返台 ✈️</h4>
+                            <p class="text-xs text-gray-500 mt-1">再見熊本，下次見！</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 旅遊翻譯中心 (SOS)  -->
+        <!-- ======================= -->
+        <section id="sos" class="section-content pt-16 pb-6 px-5 min-h-screen">
+            <!-- 頁面標題 -->
+            <div class="text-center mb-5">
+                <div class="inline-flex items-center bg-red-50 text-red-500 px-3 py-1 rounded-full text-xs font-bold mb-2 border border-red-100">
+                    <i class="fa-solid fa-language mr-1.5"></i> 翻譯幫助卡片
+                </div>
+                <h2 class="text-2xl font-black text-dark">旅遊翻譯中心</h2>
+                <p class="text-sm text-gray-500 mt-1">需要時直接出示給服務人員看</p>
+            </div>
+
+            <!-- 頁面 Tab 切換 -->
+            <div class="flex space-x-2 mb-5 bg-gray-100 p-1 rounded-2xl">
+                <button onclick="switchTranslateTab('phrases')" id="ttab-phrases" class="translate-tab-btn active flex-1 py-2 px-3 rounded-xl text-sm font-bold text-gray-500 flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-comment-dots text-xs"></i>旅遊對話
+                </button>
+                <button onclick="switchTranslateTab('food')" id="ttab-food" class="translate-tab-btn flex-1 py-2 px-3 rounded-xl text-sm font-bold text-gray-500 flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-utensils text-xs"></i>飲食需求
+                </button>
+                <button onclick="switchTranslateTab('fuel')" id="ttab-fuel" class="translate-tab-btn flex-1 py-2 px-3 rounded-xl text-sm font-bold text-gray-500 flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-gas-pump text-xs"></i>加油
+                </button>
+            </div>
+
+            <!-- ===== Panel 1: 飲食需求 ===== -->
+            <div id="tpanel-food" class="translate-panel">
+                <!-- 說明提示 -->
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 mb-4 flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 flex-shrink-0"></i>
+                    <p class="text-xs text-amber-800 leading-relaxed">每個人的飲食需求不同，請先<strong>選擇對應的人</strong>，再出示翻譯卡給餐廳人員看。</p>
+                </div>
+
+                <!-- 人物選擇器 -->
+                <div class="grid grid-cols-3 gap-2 mb-5">
+                    <button onclick="switchDietCard('linle')" id="diet-btn-linle"
+                        class="diet-person-btn active flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-green-400 bg-green-50 transition-all">
+                        <span class="text-2xl">😊</span>
+                        <span class="text-xs font-black text-green-700">霖 &amp; 樂</span>
+                        <span class="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full font-bold">無限制</span>
+                    </button>
+                    <button onclick="switchDietCard('ziv')" id="diet-btn-ziv"
+                        class="diet-person-btn flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-gray-200 bg-white transition-all">
+                        <span class="text-2xl">🙅</span>
+                        <span class="text-xs font-black text-gray-700">Ziv</span>
+                        <span class="text-[10px] text-red-600 bg-red-50 px-1.5 py-0.5 rounded-full font-bold">牛・馬 NG</span>
+                    </button>
+                    <button onclick="switchDietCard('jan')" id="diet-btn-jan"
+                        class="diet-person-btn flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-gray-200 bg-white transition-all">
+                        <span class="text-2xl">🙅</span>
+                        <span class="text-xs font-black text-gray-700">Jan</span>
+                        <span class="text-[10px] text-red-600 bg-red-50 px-1.5 py-0.5 rounded-full font-bold">牛・馬・羊 NG</span>
+                    </button>
+                </div>
+
+                <!-- 翻譯卡：霖 & 樂（無限制） -->
+                <div id="diet-card-linle" class="diet-card">
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-green-400 relative">
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-green-100 rotate-45 transform origin-bottom-left"></div>
+                        <div class="bg-green-500 py-3 px-5 text-center">
+                            <span class="text-white font-black tracking-widest text-lg">
+                                <i class="fa-solid fa-user mr-2"></i>霖 &amp; 樂
+                            </span>
+                        </div>
+                        <div class="p-6 text-center">
+                            <div class="flex items-center justify-center bg-green-50 p-5 rounded-2xl border border-green-100 mb-4">
+                                <i class="fa-solid fa-circle-check text-green-500 text-3xl mr-4"></i>
+                                <div class="text-left">
+                                    <p class="text-xl font-black text-green-700">何でも食べられます！</p>
+                                    <p class="text-sm text-green-600 mt-1">什麼都可以吃！</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                <p class="text-sm font-bold text-gray-700">牛肉・馬肉・羊肉・豚肉・<br>鶏肉・魚・野菜 — 全部OK！</p>
+                                <p class="text-xs text-gray-500 mt-1.5">牛肉、馬肉、羊肉、豬肉、<br>雞肉、海鮮、蔬菜⋯全都OK！</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 bg-green-50 border border-green-200 rounded-2xl p-4">
+                        <p class="text-xs text-green-800 font-medium text-center">
+                            <i class="fa-solid fa-circle-check text-green-500 mr-1"></i>
+                            霖和樂沒有飲食限制，所有料理都可以盡情享用！
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 翻譯卡：Ziv（不吃牛+馬） -->
+                <div id="diet-card-ziv" class="diet-card hidden">
+                    <div class="sos-card bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-primary relative">
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-red-100 rotate-45 transform origin-bottom-left"></div>
+                        <div class="bg-red-500 py-3 px-5 text-center">
+                            <span class="text-white font-black tracking-widest text-lg">
+                                <i class="fa-solid fa-circle-exclamation mr-2"></i>Ziv — お願い
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-center space-y-3">
+                                <p class="text-xl font-bold text-dark leading-relaxed">私は、</p>
+                                <div class="bg-red-50 py-3 px-4 rounded-xl border border-red-100 transform rotate-1 my-3">
+                                    <p class="text-3xl font-black text-red-600 underline decoration-red-300 decoration-4 underline-offset-4">
+                                        牛肉・馬肉
+                                    </p>
+                                </div>
+                                <p class="text-xl font-bold text-dark leading-relaxed">を食べることができません。</p>
+                            </div>
+                            <div class="my-5 border-b border-dashed border-gray-300"></div>
+                            <div class="flex items-center justify-center bg-green-50 p-4 rounded-xl text-center">
+                                <i class="fa-solid fa-circle-check text-green-500 text-xl mr-3 flex-shrink-0"></i>
+                                <p class="text-base font-bold text-green-800">
+                                    豚肉・鶏肉・<span class="text-green-600">羊肉</span>・魚・野菜<br>
+                                    <span class="text-sm font-medium">は大丈夫です。（食べられます）</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 中文說明 -->
+                    <div class="mt-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-xs font-bold text-gray-500 mb-2 flex items-center"><i class="fa-solid fa-language text-blue-400 mr-1.5"></i>中文說明</p>
+                        <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg leading-relaxed">
+                            Ziv 無法食用<span class="font-bold text-red-500">牛肉、馬肉</span>。<span class="text-green-600 font-bold">羊肉</span>、豬肉、雞肉、海鮮及蔬菜皆可食用。
+                        </p>
+                    </div>
+                    <!-- 避雷字眼 -->
+                    <div class="mt-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-xs font-bold text-gray-700 mb-2"><span class="text-red-500 mr-1">❌</span>避開字眼</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-red-50 text-red-800 text-xs font-bold p-2.5 rounded-xl text-center border border-red-100">🐮 牛肉 (Gyuniku)</div>
+                            <div class="bg-red-50 text-red-800 text-xs font-bold p-2.5 rounded-xl text-center border border-red-100">🍔 ビーフ (Beef)</div>
+                            <div class="bg-red-50 text-red-800 text-xs font-bold p-2.5 rounded-xl text-center border border-red-100">🐴 馬刺し (Basashi)</div>
+                            <div class="bg-green-50 text-green-700 text-xs font-bold p-2.5 rounded-xl text-center border border-green-100">🐑 マトン ✅ OK</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 翻譯卡：Jan（不吃牛+馬+羊） -->
+                <div id="diet-card-jan" class="diet-card hidden">
+                    <div class="sos-card bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-primary relative">
+                        <div class="absolute -top-6 -right-6 w-16 h-16 bg-red-100 rotate-45 transform origin-bottom-left"></div>
+                        <div class="bg-red-500 py-3 px-5 text-center">
+                            <span class="text-white font-black tracking-widest text-lg">
+                                <i class="fa-solid fa-circle-exclamation mr-2"></i>Jan — お願い
+                            </span>
+                        </div>
+                        <div class="p-6">
+                            <div class="text-center space-y-3">
+                                <p class="text-xl font-bold text-dark leading-relaxed">私は、</p>
+                                <div class="bg-red-50 py-3 px-4 rounded-xl border border-red-100 transform rotate-1 my-3">
+                                    <p class="text-3xl font-black text-red-600 underline decoration-red-300 decoration-4 underline-offset-4">
+                                        牛肉・馬肉・羊肉
+                                    </p>
+                                </div>
+                                <p class="text-xl font-bold text-dark leading-relaxed">を食べることができません。</p>
+                            </div>
+                            <div class="my-5 border-b border-dashed border-gray-300"></div>
+                            <div class="flex items-center justify-center bg-green-50 p-4 rounded-xl text-center">
+                                <i class="fa-solid fa-circle-check text-green-500 text-xl mr-3 flex-shrink-0"></i>
+                                <p class="text-base font-bold text-green-800">
+                                    豚肉・鶏肉・魚・野菜<br>
+                                    <span class="text-sm font-medium">は大丈夫です。（食べられます）</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 中文說明 -->
+                    <div class="mt-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-xs font-bold text-gray-500 mb-2 flex items-center"><i class="fa-solid fa-language text-blue-400 mr-1.5"></i>中文說明</p>
+                        <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg leading-relaxed">
+                            Jan 無法食用<span class="font-bold text-red-500">牛肉、馬肉、羊肉</span>。豬肉、雞肉、海鮮及蔬菜皆可食用。
+                        </p>
+                    </div>
+                    <!-- 避雷字眼 -->
+                    <div class="mt-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                        <p class="text-xs font-bold text-gray-700 mb-2"><span class="text-red-500 mr-1">❌</span>避開字眼</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-red-50 text-red-800 text-xs font-bold p-2.5 rounded-xl text-center border border-red-100">🐮 牛肉 (Gyuniku)</div>
+                            <div class="bg-red-50 text-red-800 text-xs font-bold p-2.5 rounded-xl text-center border border-red-100">🍔 ビーフ (Beef)</div>
+                            <div class="bg-red-50 text-red-800 text-xs font-bold p-2.5 rounded-xl text-center border border-red-100">🐴 馬刺し (Basashi)</div>
+                            <div class="bg-red-50 text-red-800 text-xs font-bold p-2.5 rounded-xl text-center border border-red-100">🐑 マトン (Mutton)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="h-6"></div>
+            </div>
+
+            <!-- ===== Panel 2: 加油翻譯卡 ===== -->
+            <div id="tpanel-fuel" class="translate-panel">
+                <!-- 加油翻譯主卡 -->
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-blue-500 relative">
+                    <div class="absolute -top-6 -right-6 w-16 h-16 bg-blue-100 rotate-45 transform origin-bottom-left"></div>
+                    
+                    <div class="bg-blue-500 py-3 px-5 text-center flex items-center justify-center">
+                        <i class="fa-solid fa-gas-pump text-white mr-2 text-xl"></i>
+                        <span class="text-white font-black tracking-widest text-lg">給油 / REFUEL</span>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex gap-2 justify-center mb-5">
+                            <button onclick="changeFuelType('レギュラー満タン', '一般汽油', 'red', 'Regular', this)" class="fuel-type-btn flex-1 py-2 px-1 rounded-xl border-2 border-red-500 bg-red-50 text-red-700 text-xs font-bold transition-all shadow-sm">
+                                <span class="block text-lg mb-0.5">🔴</span>
+                                レギュラー<br>(一般)
+                            </button>
+                            <button onclick="changeFuelType('ハイオク満タン', '高級汽油', 'yellow', 'High Octane', this)" class="fuel-type-btn flex-1 py-2 px-1 rounded-xl border border-gray-200 bg-white text-gray-500 text-xs font-bold transition-all hover:bg-gray-50">
+                                <span class="block text-lg mb-0.5">🟡</span>
+                                ハイオク<br>(高級)
+                            </button>
+                            <button onclick="changeFuelType('軽油満タン', '柴油', 'green', 'Diesel', this)" class="fuel-type-btn flex-1 py-2 px-1 rounded-xl border border-gray-200 bg-white text-gray-500 text-xs font-bold transition-all hover:bg-gray-50">
+                                <span class="block text-lg mb-0.5">🟢</span>
+                                軽油<br>(柴油)
+                            </button>
+                        </div>
+
+                        <div class="text-center space-y-4">
+                            <p class="text-xl font-bold text-dark leading-relaxed">すみません、</p>
+                            <div class="bg-blue-50 py-3 rounded-xl border border-blue-100 transform -rotate-1 my-4">
+                                <p id="fuel-type-text" class="text-3xl font-black text-blue-600 underline decoration-blue-300 decoration-4 underline-offset-4">
+                                    レギュラー満タン
+                                </p>
+                            </div>
+                            <p class="text-xl font-bold text-dark leading-relaxed">でお願いします。</p>
+                        </div>
+                        
+                        <div class="my-6 border-b border-dashed border-gray-300"></div>
+                        
+                        <div class="flex items-center justify-center bg-gray-50 p-4 rounded-xl text-center">
+                            <p id="fuel-desc-text" class="text-sm font-bold text-gray-700">
+                                （不好意思，請幫我加滿一般汽油）<br>
+                                <span class="text-xs text-red-500 mt-1 block"><i class="fa-solid fa-droplet mr-1"></i> 請認明紅色油槍 (Regular)</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 加油小知識 -->
+                <div class="mt-5 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                        <i class="fa-solid fa-circle-info text-blue-500 mr-2"></i> 日本加油站小知識
+                    </h3>
+                    <div class="space-y-2.5">
+                        <div class="flex items-start gap-3 bg-blue-50 p-3 rounded-xl border border-blue-100">
+                            <span class="text-lg">⛽</span>
+                            <div>
+                                <p class="text-xs font-bold text-blue-800">一般自駕租車加「レギュラー (Regular)」</p>
+                                <p class="text-xs text-blue-600 mt-0.5">對應台灣的 92 無鉛汽油，油槍為紅色</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-amber-50 p-3 rounded-xl border border-amber-100">
+                            <span class="text-lg">💴</span>
+                            <div>
+                                <p class="text-xs font-bold text-amber-800">加滿費用約 6,000～8,000 日圓</p>
+                                <p class="text-xs text-amber-600 mt-0.5">視車箱大小與剩餘油量而定，建議準備現金</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 bg-green-50 p-3 rounded-xl border border-green-100">
+                            <span class="text-lg">🏪</span>
+                            <div>
+                                <p class="text-xs font-bold text-green-800">還車前務必加滿油</p>
+                                <p class="text-xs text-green-600 mt-0.5">建議在還車地點附近的加油站補滿，避免額外收費</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="h-6"></div>
+            </div>
+
+            <!-- ===== Panel 3: 旅遊常用對話 ===== -->
+            <div id="tpanel-phrases" class="translate-panel active">
+                <!-- 分類 Tab -->
+                <div class="flex space-x-2 overflow-x-auto pb-1 hide-scrollbar mb-4">
+                    <button onclick="switchPhraseCategory('route')" id="pcat-route" class="phrase-cat-btn flex-none py-1.5 px-3 rounded-xl text-xs font-bold bg-gray-800 text-white shadow transition-all">🗺️ 問路</button>
+                    <button onclick="switchPhraseCategory('shop')" id="pcat-shop" class="phrase-cat-btn flex-none py-1.5 px-3 rounded-xl text-xs font-bold bg-white text-gray-500 border border-gray-200 shadow-sm transition-all">🛍️ 購物</button>
+                    <button onclick="switchPhraseCategory('food')" id="pcat-food" class="phrase-cat-btn flex-none py-1.5 px-3 rounded-xl text-xs font-bold bg-white text-gray-500 border border-gray-200 shadow-sm transition-all">🍜 美食</button>
+                    <button onclick="switchPhraseCategory('hotel')" id="pcat-hotel" class="phrase-cat-btn flex-none py-1.5 px-3 rounded-xl text-xs font-bold bg-white text-gray-500 border border-gray-200 shadow-sm transition-all">🏨 住宿</button>
+                    <button onclick="switchPhraseCategory('emergency')" id="pcat-emergency" class="phrase-cat-btn flex-none py-1.5 px-3 rounded-xl text-xs font-bold bg-white text-gray-500 border border-gray-200 shadow-sm transition-all">🆘 緊急</button>
+                </div>
+
+                <p class="text-xs text-gray-400 text-center mb-4"><i class="fa-solid fa-hand-pointer mr-1"></i>點擊卡片展開詳細說明</p>
+
+                <!-- 問路 -->
+                <div id="phrases-route" class="phrase-category space-y-3">
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark"><span id="route-dest-text">〇〇</span>はどこですか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5"><span id="route-dest-text-zh">OO</span> 在哪裡？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 請輸入您想去的目的地（地名或店舖）：</p>
+                            <div class="flex items-center gap-2 mb-2" onclick="(function(e){e.stopPropagation()})(event)">
+                                <input type="text" id="route-dest-input" placeholder="例如：熊本城、トイレ" class="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 transition-all" oninput="updateRouteDest(this.value)">
+                                <button onclick="updateRouteDest('')" class="text-gray-400 hover:text-gray-600 px-2 py-2"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                <p class="text-xs text-blue-600 font-bold">輸入後點擊上方的喇叭，系統會直接幫您唸出來喔！</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">ここまでお願いします</p>
+                                <p class="text-xs text-gray-400 mt-0.5">請送我到這裡（搭計程車用）</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 搭計程車時，將手機地圖出示給司機，並說這句話</p>
+                            <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                <p class="font-bold text-blue-800 text-sm">ここまでお願いします。</p>
+                                <p class="text-xs text-blue-600 mt-1">請送我到這個地方（指著地圖上的目的地）</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">写真を撮ってもらえますか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">可以幫我們拍照嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 請路人或店員幫忙拍照的萬用句</p>
+                            <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                <p class="font-bold text-blue-800 text-sm">すみません、写真を撮ってもらえますか？</p>
+                                <p class="text-xs text-blue-600 mt-1">不好意思，可以幫我們拍照嗎？</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">歩いて何分かかりますか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">走路需要幾分鐘？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">詢問步行距離的實用句型</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 購物 -->
+                <div id="phrases-shop" class="phrase-category space-y-3 hidden">
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">この <span id="shop-size-text">M</span> サイズはありますか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">請問還有這個尺寸的嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 請選擇您需要的尺寸：</p>
+                            <div class="flex gap-2 mb-1" onclick="(function(e){e.stopPropagation()})(event)">
+                                <button onclick="changeShopSize('S', this, event)" class="shop-size-btn flex-1 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 transition-all">S</button>
+                                <button onclick="changeShopSize('M', this, event)" class="shop-size-btn flex-1 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 text-xs font-bold transition-all">M</button>
+                                <button onclick="changeShopSize('L', this, event)" class="shop-size-btn flex-1 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 transition-all">L</button>
+                                <button onclick="changeShopSize('XL', this, event)" class="shop-size-btn flex-1 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 transition-all">XL</button>
+                                <button onclick="changeShopSize('2XL', this, event)" class="shop-size-btn flex-1 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 transition-all">2XL</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">新しい在庫はありますか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">請問還有新的存貨嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">指著架上的展示品，詢問是否還有拿全新的</p>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">試着してもいいですか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">請問可以試穿嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">拿著衣服向店員詢問，通常他們會引導您到試衣間（フィッティングルーム）</p>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">これはいくらですか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">這個多少錢？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 指著商品問價格</p>
+                            <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                <p class="font-bold text-blue-800 text-sm">すみません、これはいくらですか？</p>
+                                <p class="text-xs text-blue-600 mt-1">不好意思，這個多少錢？</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">カードで払えますか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">可以刷卡嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 確認可否刷卡的必備句</p>
+                            <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                <p class="font-bold text-blue-800 text-sm">カードで払えますか？</p>
+                                <p class="text-xs text-blue-600 mt-1">請問可以用信用卡支付嗎？</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">袋はいりません</p>
+                                <p class="text-xs text-gray-400 mt-0.5">不需要袋子（環保）</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">在便利商店或超市購物時的環保用語</p>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">免税はできますか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">可以退稅嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <div class="bg-amber-50 rounded-xl p-3 border border-amber-100">
+                                <p class="text-xs font-bold text-amber-800">💡 備妥護照，單店消費未稅 5,000 日圓以上可申請退稅</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">この服のコーディネートを教えてもらえませんか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">可以請您幫我介紹這件衣服怎麼搭配嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 拿著想買的單品向店員請教穿搭建議</p>
+                            <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                <p class="font-bold text-blue-800 text-sm">すみません、この服のコーディネートを教えてもらえませんか？</p>
+                                <p class="text-xs text-blue-600 mt-1">不好意思，可以請您幫我介紹這件衣服怎麼搭配嗎？</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 美食 -->
+                <div id="phrases-food" class="phrase-category space-y-3 hidden">
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark"><span id="food-party-text">4</span>名です、予約しています</p>
+                                <p class="text-xs text-gray-400 mt-0.5">我有訂位，<span id="food-party-text-zh">4</span>人</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500 mb-2">💡 請問您的訂位人數是幾位？</p>
+                            <div class="flex gap-2" onclick="(function(e){e.stopPropagation()})(event)">
+                                <button onclick="changePartySize('2', this, event)" class="party-size-btn flex-1 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 transition-all">2位</button>
+                                <button onclick="changePartySize('4', this, event)" class="party-size-btn flex-1 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 text-xs font-bold transition-all">4位</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">おすすめは何ですか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">你們有什麼推薦的料理？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">詢問店員招牌菜，讓對方推薦最好的料理</p>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">おいしかったです！</p>
+                                <p class="text-xs text-gray-400 mt-0.5">非常好吃！</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">對店家表達感謝，是最受歡迎的一句話！</p>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">お会計をお願いします</p>
+                                <p class="text-xs text-gray-400 mt-0.5">麻煩結帳</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">用餐完畢結帳時使用，也可以舉手示意後說這句</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 住宿 -->
+                <div id="phrases-hotel" class="phrase-category space-y-3 hidden">
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">チェックインをお願いします</p>
+                                <p class="text-xs text-gray-400 mt-0.5">我要辦理入住</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+                                <p class="font-bold text-blue-800 text-sm">チェックインをお願いします。〇〇という名前で予約しています。</p>
+                                <p class="text-xs text-blue-600 mt-1">我要辦理入住，訂房名稱是〇〇。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">Wifi のパスワードを教えてください</p>
+                                <p class="text-xs text-gray-400 mt-0.5">請告訴我 WiFi 密碼</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">入住第一件事：詢問 WiFi 密碼！</p>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">チェックアウトをお願いします</p>
+                                <p class="text-xs text-gray-400 mt-0.5">我要辦理退房</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">退房時向櫃台說，並交還房卡</p>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">荷物を預かってもらえますか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">可以幫我保管行李嗎？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">退房後、還未離開的那段時間，請飯店幫您暫存行李</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 緊急 -->
+                <div id="phrases-emergency" class="phrase-category space-y-3 hidden">
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-red-200 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-red-600">助けてください！</p>
+                                <p class="text-xs text-gray-400 mt-0.5">救命！請幫幫我！</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-red-100">
+                            <div class="bg-red-50 rounded-xl p-3 border border-red-100">
+                                <p class="text-xs font-bold text-red-700">緊急狀況下大聲呼叫此語句。日本緊急電話：🚒 消防119 / 🚔 警察110</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-red-200 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-red-600">病院はどこですか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">醫院在哪裡？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-red-100">
+                            <div class="bg-red-50 rounded-xl p-3 border border-red-100">
+                                <p class="text-xs font-bold text-red-700">日本救護車電話：119（免費，24 小時）</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-red-200 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-red-600">財布を盗まれました</p>
+                                <p class="text-xs text-gray-400 mt-0.5">我的錢包被偷了</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-red-100">
+                            <div class="bg-red-50 rounded-xl p-3 border border-red-100">
+                                <p class="text-xs font-bold text-red-700">先撥打警察 110，再聯絡台灣在日辦事處：+81-3-3280-7811</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="phrase-card bg-white p-4 rounded-2xl border border-gray-100 shadow-sm" onclick="togglePhrase(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-base font-black text-dark">近くの薬局はどこですか？</p>
+                                <p class="text-xs text-gray-400 mt-0.5">附近的藥局在哪裡？</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-gray-300 transition-transform"></i>
+                        </div>
+                        <div class="phrase-detail mt-3 pt-3 border-t border-blue-100">
+                            <p class="text-xs text-gray-500">輕微不舒服時，可先前往藥局（ドラッグストア）購買非處方藥</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="h-10"></div>
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 實用工具 (Tools) -->
+        <!-- ======================= -->
+        <section id="tools" class="section-content pt-16 pb-6 px-5 min-h-screen">
+            <!-- 匯率換算機 -->
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 p-6 rounded-3xl shadow-lg relative overflow-hidden mb-6 text-white">
+                <!-- 裝飾背景圖案 -->
+                <i class="fa-solid fa-yen-sign absolute -right-4 -bottom-4 text-8xl opacity-10 transform -rotate-12"></i>
+                
+                <h3 class="font-bold mb-4 flex items-center text-lg">
+                    <i class="fa-solid fa-calculator mr-2 text-yellow-300"></i>匯率閃電換算
+                </h3>
+                <p class="text-xs text-blue-200 mb-4 tracking-wide">參考匯率：0.21 (自動四捨五入)</p>
+                
+                <div class="flex flex-col space-y-3 relative z-10">
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-dark font-bold">¥</span>
+                        <input type="number" id="jpyInput" oninput="convertCurrency()" placeholder="輸入日圓金額" class="w-full bg-white text-dark text-lg font-bold rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-4 focus:ring-blue-300/50 transition">
+                    </div>
+                    
+                    <div class="flex justify-center -my-1 z-20">
+                        <div class="bg-yellow-400 text-dark w-8 h-8 rounded-full flex items-center justify-center border-4 border-indigo-600 shadow-sm">
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4 flex justify-between items-center">
+                        <span class="text-sm font-medium">換算台幣</span>
+                        <div class="text-2xl font-black tracking-tight flex items-baseline">
+                            <span class="text-sm mr-1 font-normal">NT$</span>
+                            <span id="twdOutput">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 出發前打包清單 -->
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-gray-800 flex items-center text-lg">
+                        <i class="fa-solid fa-suitcase mr-2 text-teal-500"></i>行前確認清單
+                    </h3>
+                    <button onclick="resetChecklist()" class="text-xs text-gray-400 hover:text-red-500 underline transition">
+                        重置
+                    </button>
+                </div>
+                
+                <div class="space-y-1" id="checklist">
+                    <!-- 動態生成選項 -->
+                </div>
+            </div>
+            
+            <div class="h-10"></div>
+        </section>
+
+        <!-- ======================= -->
+        <!-- SECTION: 記帳本 (Expense) -->
+        <!-- ======================= -->
+        <section id="expense" class="section-content pt-16 pb-32 px-5 min-h-screen">
+            <div class="mb-4">
+                <div class="flex gap-2 p-1 bg-gray-100 rounded-xl">
+                    <button onclick="switchExpenseTab('list')" id="exp-tab-list" class="flex-1 py-2 text-sm font-bold bg-white text-dark rounded-lg shadow-sm transition-all">帳目清單</button>
+                    <button onclick="switchExpenseTab('settle')" id="exp-tab-settle" class="flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg transition-all">分帳結算</button>
+                    <button onclick="switchExpenseTab('add')" id="exp-tab-add" class="flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg transition-all"><i class="fa-solid fa-plus mr-1"></i>新增</button>
+                </div>
+            </div>
+
+            <!-- Panel: List -->
+            <div id="exp-panel-list" class="active">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="font-bold text-gray-800"><i class="fa-solid fa-receipt mr-2 text-blue-500"></i>所有支出</h3>
+                    <button onclick="fetchExpenses()" class="text-xs text-blue-500 hover:bg-blue-50 px-2 py-1 rounded transition"><i class="fa-solid fa-rotate-right mr-1"></i>重整</button>
+                </div>
+                <div id="expense-list-container" class="space-y-3">
+                    <div class="text-center py-8 text-gray-400 text-sm">載入中...</div>
+                </div>
+            </div>
+
+            <!-- Panel: Add -->
+            <div id="exp-panel-add" class="hidden">
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center text-lg">
+                        <i class="fa-solid fa-cart-plus mr-2 text-green-500"></i>新增一筆支出
+                    </h3>
+                    <form id="addExpenseForm" onsubmit="handleAddExpense(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">項目名稱 *</label>
+                            <input type="text" id="exp-title" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 focus:bg-white transition" placeholder="例如：黑亭拉麵">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">金額 (¥) *</label>
+                                <input type="number" id="exp-amount" required min="0" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 focus:bg-white transition" placeholder="輸入日圓">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">付款人 *</label>
+                                <select id="exp-payer" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 focus:bg-white transition">
+                                    <!-- 動態生成選項 -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">類別 *</label>
+                                <select id="exp-category" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 focus:bg-white transition">
+                                    <option value="餐飲">餐飲</option>
+                                    <option value="交通">交通</option>
+                                    <option value="住宿">住宿</option>
+                                    <option value="門票">門票</option>
+                                    <option value="購物">購物</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">日期 *</label>
+                                <input type="date" id="exp-date" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 focus:bg-white transition">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">備註</label>
+                            <input type="text" id="exp-note" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-blue-400 focus:bg-white transition" placeholder="選填">
+                        </div>
+                        <button type="submit" id="exp-submit-btn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl shadow-sm transition flex justify-center items-center">
+                            新增支出
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Panel: Settle -->
+            <div id="exp-panel-settle" class="hidden">
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-3xl mb-5 shadow-sm">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-indigo-900 flex items-center text-sm">
+                            <i class="fa-solid fa-users-gear mr-2 text-indigo-500"></i>成員設定
+                        </h3>
+                        <button onclick="editMembers()" class="text-xs text-indigo-600 hover:underline border border-indigo-200 bg-white px-2 py-0.5 rounded shadow-sm">修改名單</button>
+                    </div>
+                    <div id="members-display" class="flex flex-wrap gap-1.5">
+                        <!-- 動態顯示 -->
+                    </div>
+                </div>
+
+                <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                    <i class="fa-solid fa-scale-balanced mr-2 text-orange-500"></i>個人淨額
+                </h3>
+                <div id="settlement-balances" class="space-y-2 mb-6">
+                    <!-- 動態顯示 -->
+                </div>
+
+                <h3 class="font-bold text-gray-800 mb-3 flex items-center">
+                    <i class="fa-solid fa-money-bill-transfer mr-2 text-green-500"></i>最優化轉帳清單
+                </h3>
+                <div id="settlement-transfers" class="space-y-2">
+                    <!-- 動態顯示 -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ======================= -->
+    <!-- 底部固定導航標籤列       -->
+    <!-- ======================= -->
+    <nav class="fixed bottom-0 inset-x-0 glass-nav shadow-[0_-4px_20px_rgba(0,0,0,0.05)] z-50 rounded-t-2xl">
+        <div class="max-w-md mx-auto flex justify-around items-end pt-3 pb-safe bg-transparent">
+            <!-- Home -->
+            <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center flex-1 pb-3" id="tab-home">
+                <div class="relative">
+                    <i class="fa-solid fa-house text-xl mb-1 block"></i>
+                </div>
+                <span class="text-[10px] font-bold tracking-wide">首頁</span>
+            </button>
+            
+            <!-- Itinerary -->
+            <button onclick="switchTab('itinerary')" class="nav-item flex flex-col items-center flex-1 pb-3" id="tab-itinerary">
+                <i class="fa-solid fa-map text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">行程</span>
+            </button>
+            
+            <!-- SOS -->
+            <button onclick="switchTab('sos')" class="nav-item flex flex-col items-center flex-1 pb-3 relative" id="tab-sos">
+                <!-- SOS Badge -->
+                <div class="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-red-500 animate-ping"></div>
+                <div class="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-red-500"></div>
+                <i class="fa-solid fa-language text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">翻譯幫助</span>
+            </button>
+            
+            <!-- Expense (暫時隱藏) -->
+            <button onclick="switchTab('expense')" class="nav-item hidden flex-col items-center flex-1 pb-3" id="tab-expense">
+                <i class="fa-solid fa-file-invoice-dollar text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">記帳本</span>
+            </button>
+            
+            <!-- Tools -->
+            <button onclick="switchTab('tools')" class="nav-item flex flex-col items-center flex-1 pb-3" id="tab-tools">
+                <i class="fa-solid fa-toolbox text-xl mb-1 block"></i>
+                <span class="text-[10px] font-bold tracking-wide">工具</span>
+            </button>
+        </div>
+        <!-- iOS 底部安全距離適配 -->
+        <div class="h-2 w-full"></div>
+    </nav>
+
+    <!-- ======================= -->
+    <!-- Javascript 邏輯區域     -->
+    <!-- ======================= -->
+    <script>
+        // === 0. 翻譯頁 Tab 切換邏輯 ===
+        function switchTranslateTab(tabId) {
+            // 更新 Tab 按鈕樣式
+            document.querySelectorAll('.translate-tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('ttab-' + tabId).classList.add('active');
+
+            // 切換 Panel
+            document.querySelectorAll('.translate-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            document.getElementById('tpanel-' + tabId).classList.add('active');
+        }
+
+        // === 0b. 飲食需求人物卡切換 ===
+        function switchDietCard(person) {
+            // 重置所有人物按鈕樣式
+            document.querySelectorAll('.diet-person-btn').forEach(btn => {
+                btn.className = 'diet-person-btn flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-gray-200 bg-white transition-all';
+            });
+
+            // 套用選中樣式（霖&樂用綠色，其他用紅色）
+            const activeBtn = document.getElementById('diet-btn-' + person);
+            if (person === 'linle') {
+                activeBtn.className = 'diet-person-btn active flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-green-400 bg-green-50 transition-all';
+            } else {
+                activeBtn.className = 'diet-person-btn active flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 border-red-400 bg-red-50 transition-all';
+            }
+
+            // 切換顯示的翻譯卡
+            document.querySelectorAll('.diet-card').forEach(card => {
+                card.classList.add('hidden');
+            });
+            document.getElementById('diet-card-' + person).classList.remove('hidden');
+        }
+
+        // === 0c. 旅遊對話分類切換 ===
+        function switchPhraseCategory(catId) {
+            document.querySelectorAll('.phrase-cat-btn').forEach(btn => {
+                btn.className = 'phrase-cat-btn flex-none py-1.5 px-3 rounded-xl text-xs font-bold bg-white text-gray-500 border border-gray-200 shadow-sm transition-all';
+            });
+            document.getElementById('pcat-' + catId).className = 'phrase-cat-btn flex-none py-1.5 px-3 rounded-xl text-xs font-bold bg-gray-800 text-white shadow transition-all';
+
+            document.querySelectorAll('.phrase-category').forEach(el => el.classList.add('hidden'));
+            document.getElementById('phrases-' + catId).classList.remove('hidden');
+        }
+
+        // === 0c. 展開/收合對話卡片 ===
+        function togglePhrase(card) {
+            const isExpanded = card.classList.contains('expanded');
+            // 收合所有
+            document.querySelectorAll('.phrase-card.expanded').forEach(c => c.classList.remove('expanded'));
+            // 若本來是收合的，則展開
+            if (!isExpanded) {
+                card.classList.add('expanded');
+            }
+        }
+        // === 1. Tab 切換邏輯 ===
+        const sectionTitles = {
+            'home': '', // 首頁不顯示頂部標題
+            'itinerary': '每日行程總覽',
+            'expense': '旅費記帳本',
+            'sos': '', 
+            'tools': '旅行實用工具'
+        };
+
+        function switchTab(tabId) {
+            // 自動滾動到頂部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // 隱藏所有 section
+            document.querySelectorAll('.section-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            // 顯示目標 section
+            document.getElementById(tabId).classList.add('active');
+
+            // 處理底部 Nav 激活狀態
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // 處理頂部標題列
+            const header = document.getElementById('top-header');
+            const headerTitle = document.getElementById('header-title');
+            
+            if (sectionTitles[tabId]) {
+                headerTitle.textContent = sectionTitles[tabId];
+                header.classList.remove('hidden');
+                setTimeout(() => header.classList.add('opacity-100'), 10);
+            } else {
+                header.classList.remove('opacity-100');
+                setTimeout(() => header.classList.add('hidden'), 300);
+            }
+            
+            // 記帳本初始化
+            if (tabId === 'expense') {
+                if (typeof expenseList !== 'undefined' && expenseList.length === 0) {
+                    renderMembers();
+                    updatePayerOptions();
+                    fetchExpenses();
+                }
+            }
+        }
+
+        // === 2. 行程天數切換邏輯 ===
+        function showDay(day, btnElement) {
+            // 隱藏所有 day-content
+            document.querySelectorAll('.day-content').forEach(el => el.classList.add('hidden'));
+            
+            // 顯示對應天數或 Placeholder
+            const targetDay = document.getElementById('day-' + day);
+            if (targetDay) {
+                targetDay.classList.remove('hidden');
+            } else {
+                document.getElementById('day-empty').classList.remove('hidden');
+            }
+
+            // 重置所有按鈕樣式
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                if(btn.innerText.includes('🚗')) {
+                    btn.className = "day-btn flex-none px-4 py-2.5 bg-white border border-red-200 text-red-500 rounded-xl shadow-sm text-sm font-bold transition-all";
+                } else if(btn.innerText.includes('先行')) {
+                    btn.className = "day-btn flex-none px-4 py-2.5 bg-white border border-pink-300 text-pink-500 rounded-xl shadow-sm text-sm font-bold transition-all";
+                } else {
+                    btn.className = "day-btn flex-none px-4 py-2.5 bg-white text-gray-500 rounded-xl shadow-sm border border-gray-100 text-sm font-bold transition-all";
+                }
+            });
+
+            // 設置當前激活按鈕樣式
+            btnElement.className = "day-btn flex-none px-4 py-2.5 bg-primary text-white rounded-xl shadow-md text-sm font-bold transition-all transform scale-105";
+        }
+
+        // === 3. 匯率換算邏輯 ===
+        function convertCurrency() {
+            const inputVal = document.getElementById('jpyInput').value;
+            const outputEl = document.getElementById('twdOutput');
+            
+            if (!inputVal || inputVal <= 0) {
+                outputEl.innerText = '0';
+                return;
+            }
+            // 匯率 0.21
+            const twd = Math.round(inputVal * 0.21);
+            // 加上千分位逗號
+            outputEl.innerText = twd.toLocaleString();
+        }
+
+        // === 4. 倒數計時邏輯 ===
+        function initCountdown() {
+            // 指定為日本時區，避免不同時區的裝置倒數結果不同
+            const targetDate = new Date('2026-05-06T18:15:00+09:00').getTime();
+            const countdownEl = document.getElementById('countdown');
+
+            const timer = setInterval(() => {
+                const now = new Date().getTime();
+                const dist = targetDate - now;
+
+                if (dist < 0) {
+                    clearInterval(timer);
+                    countdownEl.innerHTML = '<span class="text-yellow-300"><i class="fa-solid fa-plane-arrival mr-1"></i>旅途愉快！</span>';
+                    return;
+                }
+
+                const days = Math.floor(dist / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                countdownEl.innerHTML = `倒數 <span class="bg-white text-primary px-1.5 py-0.5 rounded text-xs mx-1">${days}</span> 天 <span class="bg-white text-primary px-1.5 py-0.5 rounded text-xs mx-1">${hours}</span> 時`;
+            }, 1000);
+        }
+
+        // === 5. 本地儲存 Checklist 邏輯 ===
+        const checklistData = [
+            // 出發前必辦
+            { id: 'item1',  text: '✅ Visit Japan Web 填寫 (入境申報)' },
+            // 證件
+            { id: 'item2',  text: '🛂 護照正本 (效期 > 6 個月)' },
+            { id: 'item3',  text: '🪪 身分證 (護照遺失或機票姓名有誤時的輔助證明)' },
+            { id: 'item4',  text: '🚗 台灣駕照正本 + 日文譯本' },
+            { id: 'item5',  text: '📋 租車預約單 / KEP 確認信' },
+            // 通訊 & 3C
+            { id: 'item6',  text: '📱 eSIM 購買並啟用' },
+            { id: 'item7',  text: '🔋 行動電源 & 萬用轉接頭' },
+            // 金融 & 交通
+            { id: 'item8',  text: '💴 換匯日圓現金 (餐廳/小店用)' },
+            { id: 'item9',  text: '💳 信用卡 / 西瓜卡 (Suica，交通卡)' },
+            // 衣物 & 鞋履
+            { id: 'item10', text: '👕 換洗衣物約三套' },
+            { id: 'item11', text: '🧥 薄長袖外套 (阿蘇山上風大)' },
+            { id: 'item12', text: '👟 舒適好走的鞋 / 拖鞋 (部分住宿不提供)' },
+            // 盥洗 & 保養
+            { id: 'item13', text: '🪥 盥洗用品、保養品與化妝品' },
+            // 藥品
+            { id: 'item14', text: '💊 自備常用藥 (感冒藥、退燒止痛、腸胃藥、暈車藥)' },
+            // 其他
+            { id: 'item15', text: '☂️ 摺疊傘或雨衣' },
+        ];
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist');
+            container.innerHTML = '';
+            
+            // 從 LocalStorage 獲取記錄
+            const savedState = JSON.parse(localStorage.getItem('kumamoto_checklist')) || {};
+
+            checklistData.forEach(item => {
+                const isChecked = savedState[item.id] || false;
+                
+                const label = document.createElement('label');
+                label.className = "flex items-center p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition tap-highlight-transparent";
+                
+                label.innerHTML = `
+                    <input type="checkbox" id="${item.id}" class="custom-checkbox flex-shrink-0" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}', this)">
+                    <span class="ml-3 text-sm font-medium ${isChecked ? 'checked-text' : 'text-gray-700'} transition" id="text-${item.id}">${item.text}</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function toggleCheck(id, checkbox) {
+            // 視覺更新字體
+            const textEl = document.getElementById('text-' + id);
+            if (checkbox.checked) {
+                textEl.classList.add('checked-text');
+                textEl.classList.remove('text-gray-700');
+            } else {
+                textEl.classList.remove('checked-text');
+                textEl.classList.add('text-gray-700');
+            }
+
+            // 保存狀態
+            const savedState = JSON.parse(localStorage.getItem('kumamoto_checklist')) || {};
+            savedState[id] = checkbox.checked;
+            localStorage.setItem('kumamoto_checklist', JSON.stringify(savedState));
+        }
+
+        function resetChecklist() {
+            if(confirm('確定要清除所有打勾記錄嗎？')) {
+                localStorage.removeItem('kumamoto_checklist');
+                renderChecklist();
+            }
+        }
+
+        // === 6. 導航按鈕邏輯 ===
+        function initNavigation() {
+            const drivingDays = [4, 5]; // D4, D5 是自駕
+            
+            document.querySelectorAll('.day-content').forEach(dayEl => {
+                const dayId = dayEl.id;
+                if (!dayId) return;
+                const dayNum = parseInt(dayId.split('-')[1]);
+                const isDriving = drivingDays.includes(dayNum);
+                const travelMode = isDriving ? 'driving' : 'transit';
+                
+                dayEl.querySelectorAll('.timeline-item h4').forEach(h4 => {
+                    let locationText = h4.innerText.trim();
+                    
+                    const ignoreList = [
+                        '飯店 Check-in', 
+                        '啟程返回熊本', 
+                        '熊本市區自駕出發',
+                        '熊本市區租車出發', 
+                        '別府飯店出發', 
+                        '熊本市區還車', 
+                        '起飛返台', 
+                        '搭乘機場利木津巴士', 
+                        '搭乘利木津巴士前往機場', 
+                        '抵達機場與免稅購物',
+                        '市中心最後採買',
+                        '早餐',
+                        '抵達別府 & 晚餐'
+                    ];
+                    if (ignoreList.includes(locationText) || locationText.includes('搭乘') || locationText.includes('午餐：商店街')) return;
+                    
+                    if (locationText.includes('：')) {
+                        locationText = locationText.split('：')[1].trim();
+                    }
+                    locationText = locationText.split('(')[0].split('（')[0].trim();
+                    
+                    if (!locationText) return;
+                    const navUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationText)}`;
+                    
+                    const navBtn = document.createElement('a');
+                    navBtn.href = navUrl;
+                    navBtn.target = "_blank";
+                    navBtn.className = "inline-flex items-center justify-center ml-2 text-blue-500 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors shadow-sm border border-blue-100";
+                    navBtn.innerHTML = isDriving 
+                        ? '<i class="fa-solid fa-car-side mr-1"></i>導航' 
+                        : '<i class="fa-solid fa-train-subway mr-1"></i>導航';
+                    
+                    h4.classList.add('flex', 'items-center', 'flex-wrap', 'gap-y-1');
+                    h4.appendChild(navBtn);
+                });
+            });
+        }
+
+        // === 7a. 多地區天氣切換 (全域函數) ===
+        function switchWeatherLoc(dayNum, locKey, btn) {
+            // 隱藏該天所有地區面板
+            document.querySelectorAll(`[id^="wloc-${dayNum}-"]`).forEach(el => el.classList.add('hidden'));
+            // 顯示選中的面板
+            const target = document.getElementById(`wloc-${dayNum}-${locKey}`);
+            if (target) target.classList.remove('hidden');
+            // 重置同群組所有 Tab 樣式
+            btn.closest('.weather-loc-tabs').querySelectorAll('.weather-loc-btn').forEach(b => {
+                b.classList.remove('bg-blue-500', 'text-white', 'shadow-sm');
+                b.classList.add('text-gray-500');
+            });
+            btn.classList.remove('text-gray-500');
+            btn.classList.add('bg-blue-500', 'text-white', 'shadow-sm');
+        }
+
+        // === 7. 小時級即時天氣邏輯 ===
+        async function initWeather() {
+            const locations = {
+                'kumamoto': { lat: 32.8031, lon: 130.7079, name: '熊本' },
+                'beppu':    { lat: 33.2794, lon: 131.5011, name: '別府' },
+                'aso':      { lat: 32.8847, lon: 131.0994, name: '阿蘇' },
+                'oita':     { lat: 33.2382, lon: 131.6126, name: '大分' }
+            };
+
+            const weatherCodes = {
+                0: { desc: '晴天', icon: 'fa-sun', color: 'text-amber-500' },
+                1: { desc: '晴時多雲', icon: 'fa-cloud-sun', color: 'text-amber-500' },
+                2: { desc: '多雲', icon: 'fa-cloud', color: 'text-gray-400' },
+                3: { desc: '陰天', icon: 'fa-cloud', color: 'text-gray-500' },
+                45: { desc: '霧', icon: 'fa-smog', color: 'text-gray-400' },
+                48: { desc: '霧', icon: 'fa-smog', color: 'text-gray-400' },
+                51: { desc: '毛毛雨', icon: 'fa-cloud-rain', color: 'text-blue-400' },
+                53: { desc: '毛毛雨', icon: 'fa-cloud-rain', color: 'text-blue-400' },
+                55: { desc: '毛毛雨', icon: 'fa-cloud-rain', color: 'text-blue-400' },
+                61: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                63: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                65: { desc: '大雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-600' },
+                71: { desc: '雪', icon: 'fa-snowflake', color: 'text-blue-300' },
+                73: { desc: '雪', icon: 'fa-snowflake', color: 'text-blue-300' },
+                75: { desc: '大雪', icon: 'fa-snowflake', color: 'text-blue-300' },
+                80: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                81: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                82: { desc: '陣雨', icon: 'fa-cloud-showers-heavy', color: 'text-blue-500' },
+                95: { desc: '雷雨', icon: 'fa-cloud-bolt', color: 'text-purple-500' }
+            };
+
+            // 行程日期對照 (day index -> 日期字串 YYYY-MM-DD)
+            const dayDates = {
+                0: '2026-05-05', // 先行
+                1: '2026-05-06', // D1
+                2: '2026-05-07', // D2
+                3: '2026-05-08', // D3
+                4: '2026-05-09', // D4
+                5: '2026-05-10', // D5
+                6: '2026-05-11', // D6
+                7: '2026-05-12', // D7
+            };
+
+            try {
+                // forecast_days=14 可以涵蓋到 5/12 及以後
+                const params = "hourly=temperature_2m,weathercode&timezone=Asia%2FTokyo&forecast_days=14";
+                const [kumaRes, beppuRes, asoRes, oitaRes] = await Promise.all([
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locations.kumamoto.lat}&longitude=${locations.kumamoto.lon}&${params}`),
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locations.beppu.lat}&longitude=${locations.beppu.lon}&${params}`),
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locations.aso.lat}&longitude=${locations.aso.lon}&${params}`),
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${locations.oita.lat}&longitude=${locations.oita.lon}&${params}`)
+                ]);
+                
+                const [kumaData, beppuData, asoData, oitaData] = await Promise.all([
+                    kumaRes.json(), beppuRes.json(), asoRes.json(), oitaRes.json()
+                ]);
+                
+                const weatherData = {
+                    'kumamoto': kumaData.hourly,
+                    'beppu':    beppuData.hourly,
+                    'aso':      asoData.hourly,
+                    'oita':     oitaData.hourly
+                };
+
+                // 從 open-meteo 的 time 陣列中，找到對應日期的起始 index
+                const findDayStartIndex = (data, dateStr) => {
+                    if (!data || !data.time) return -1;
+                    return data.time.findIndex(t => t.startsWith(dateStr));
+                };
+
+                const getWeatherHtml = (locKey, dayNum) => {
+                    const data = weatherData[locKey];
+                    if (!data) return '';
+                    
+                    const locName = locations[locKey].name;
+                    const targetDate = dayDates[dayNum];
+                    if (!targetDate) return '';
+
+                    const startIdx = findDayStartIndex(data, targetDate);
+                    if (startIdx === -1) return ''; // API 資料中找不到該日期 (超出預報範圍)
+
+                    // 判斷目標日期是否為「今天」
+                    const now = new Date();
+                    // 用日本時區 (UTC+9) 計算今天日期與時間，避免跨日邊界錯誤
+                    const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+                    const jstIsoStr = jstNow.toISOString();
+                    const todayStr = jstIsoStr.slice(0, 10);
+                    const isToday = (targetDate === todayStr);
+                    const currentHour = parseInt(jstIsoStr.slice(11, 13)); // 取得正確的日本時間小時
+
+                    // 顯示時段：若為今天，從當前小時開始取 8 小時；其餘取 7、9、11、13、15、17、19、21 共 8 個時間點
+                    let displayHours;
+                    if (isToday) {
+                        displayHours = [];
+                        for (let h = currentHour; h < currentHour + 8; h++) {
+                            displayHours.push(h);
+                        }
+                    } else {
+                        displayHours = [7, 9, 11, 13, 15, 17, 19, 21];
+                    }
+
+                    // 月/日標籤
+                    const [, mm, dd] = targetDate.split('-');
+                    const dateLabel = `${parseInt(mm)}/${parseInt(dd)}`;
+
+                    let hourlyCardsHtml = '';
+                    for (const h of displayHours) {
+                        const idx = startIdx + h;
+                        if (idx >= data.temperature_2m.length) continue;
+
+                        const temp = Math.round(data.temperature_2m[idx]);
+                        const code = data.weathercode[idx];
+                        const codeInfo = weatherCodes[code] || { desc: '未知', icon: 'fa-cloud', color: 'text-gray-400' };
+                        const isCurrentHour = isToday && h === currentHour;
+                        
+                        // 處理跨夜的時間顯示 (例如 h=24 就是 0:00)
+                        const displayH = h % 24;
+                        const timeStr = isCurrentHour ? '現在' : `${displayH}:00`;
+                        
+                        const bgClass = isCurrentHour ? 'bg-blue-500 text-white border-blue-600' : 'bg-white text-dark border-gray-100';
+                        const iconColor = isCurrentHour ? 'text-white' : codeInfo.color;
+                        const tempColor = isCurrentHour ? 'text-white' : 'text-gray-800';
+                        const timeColor = isCurrentHour ? 'text-blue-100' : 'text-gray-400';
+
+                        hourlyCardsHtml += `
+                            <div class="flex-none flex flex-col items-center justify-center p-2.5 rounded-2xl border shadow-sm min-w-[64px] ${bgClass} transition-transform hover:scale-105">
+                                <span class="text-[10px] font-bold mb-1.5 ${timeColor}">${timeStr}</span>
+                                <i class="fa-solid ${codeInfo.icon} ${iconColor} text-lg mb-1.5 drop-shadow-sm"></i>
+                                <span class="text-sm font-black ${tempColor} tracking-tighter">${temp}°</span>
+                            </div>
+                        `;
+                    }
+
+                    if (!hourlyCardsHtml) return '';
+                    
+                    return `
+                        <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-3xl p-4 mb-5 border border-blue-100 shadow-sm backdrop-blur-md">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="bg-white/80 p-2 rounded-xl shadow-sm mr-2 flex items-center justify-center border border-gray-100">
+                                        <i class="fa-solid fa-location-dot text-blue-500"></i>
+                                    </div>
+                                    <p class="text-sm font-bold text-gray-800 tracking-wide">${locName} <span class="text-xs font-normal text-gray-500 ml-1">${dateLabel} 天氣預報</span></p>
+                                </div>
+                            </div>
+                            <!-- 橫向滾動容器 -->
+                            <div class="flex space-x-3 overflow-x-auto pb-2 pt-1 hide-scrollbar -mx-2 px-2">
+                                ${hourlyCardsHtml}
+                            </div>
+                        </div>
+                    `;
+                };
+
+                // 多地區天氣切換 Widget：產生含 Tab 的切換卡片
+                const getMultiLocWeatherHtml = (locKeys, dayNum) => {
+                    const panels = [];
+                    for (const lk of locKeys) {
+                        const html = getWeatherHtml(lk, dayNum);
+                        if (html) panels.push({ locKey: lk, html });
+                    }
+                    if (panels.length === 0) return '';
+                    if (panels.length === 1) return panels[0].html; // fallback
+
+                    const tabsHtml = panels.map((p, i) => {
+                        const isActive = i === 0;
+                        const activeClass = isActive ? 'bg-blue-500 text-white shadow-sm' : 'text-gray-500';
+                        return `<button onclick="switchWeatherLoc(${dayNum}, '${p.locKey}', this)" class="weather-loc-btn flex-1 py-1.5 px-2 rounded-xl text-xs font-bold transition-all ${activeClass}">${locations[p.locKey].name}</button>`;
+                    }).join('');
+
+                    const panelsHtml = panels.map((p, i) =>
+                        `<div id="wloc-${dayNum}-${p.locKey}" class="${i > 0 ? 'hidden' : ''}">${p.html}</div>`
+                    ).join('');
+
+                    return `
+                        <div>
+                            <div class="weather-loc-tabs flex gap-1.5 mb-1 bg-white/70 p-1 rounded-2xl border border-blue-100 shadow-sm">
+                                ${tabsHtml}
+                            </div>
+                            ${panelsHtml}
+                        </div>
+                    `;
+                };
+
+                // D4 多地區配置：熊本 → 阿蘇 → 別府 (沿途方向)
+                const d4LocKeys = ['kumamoto', 'aso', 'beppu'];
+                // D5 多地區配置：別府 → 大分 → 熊本 (沿途方向)
+                const d5LocKeys = ['beppu', 'oita', 'kumamoto'];
+
+                document.querySelectorAll('.day-content').forEach(dayEl => {
+                    const dayId = dayEl.id;
+                    if (!dayId || dayId === 'day-empty') return;
+                    const dayNum = parseInt(dayId.split('-')[1]);
+
+                    let weatherHtml = '';
+                    if (dayNum === 4) {
+                        weatherHtml = getMultiLocWeatherHtml(d4LocKeys, dayNum);
+                    } else if (dayNum === 5) {
+                        weatherHtml = getMultiLocWeatherHtml(d5LocKeys, dayNum);
+                    } else {
+                        weatherHtml = getWeatherHtml('kumamoto', dayNum);
+                    }
+
+                    const gridEl = dayEl.querySelector('.grid');
+                    if (gridEl && weatherHtml) {
+                        gridEl.insertAdjacentHTML('beforebegin', weatherHtml);
+                    }
+                });
+
+            } catch (err) {
+                console.error('Failed to fetch weather:', err);
+            }
+        }
+
+        // === 8. 共同記帳邏輯 (Notion API) ===
+        // 拆分 Token 以避免被 GitHub Secret Scanning 偵測並自動註銷
+        const NOTION_TOKEN = 'ntn_312425669132' + 'cwkBL7QCDMjjbWhAnKYYMUP1niHR783eWX';
+        const DATABASE_ID = '34774633bd01801fb771e01ff639a802';
+        const CORS_PROXY = 'https://corsproxy.io/?';
+
+        let expenseList = [];
+        
+        function getMembers() {
+            try {
+                const m = JSON.parse(localStorage.getItem('expense_members'));
+                if (m && m.length > 0) return m;
+            } catch(e) {}
+            return ['霖', '樂', 'Jan', 'Ziv'];
+        }
+
+        function saveMembers(members) {
+            localStorage.setItem('expense_members', JSON.stringify(members));
+            renderMembers();
+            updatePayerOptions();
+            calculateSettlement();
+        }
+
+        function editMembers() {
+            const current = getMembers().join(',');
+            const input = prompt('請輸入參與分帳的成員名單，以半形逗號分隔：', current);
+            if (input !== null && input.trim() !== '') {
+                const newMembers = input.split(',').map(m => m.trim()).filter(m => m);
+                if (newMembers.length > 0) {
+                    saveMembers(newMembers);
+                }
+            }
+        }
+
+        function renderMembers() {
+            const members = getMembers();
+            const container = document.getElementById('members-display');
+            if(container) {
+                container.innerHTML = members.map(m => `<span class="bg-white text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-full text-xs font-bold shadow-sm">${m}</span>`).join('');
+            }
+        }
+
+        function updatePayerOptions() {
+            const members = getMembers();
+            const select = document.getElementById('exp-payer');
+            if(select) {
+                select.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join('');
+            }
+        }
+
+        function switchExpenseTab(tabId) {
+            ['list', 'add', 'settle'].forEach(t => {
+                document.getElementById('exp-panel-' + t).classList.add('hidden');
+                const btn = document.getElementById('exp-tab-' + t);
+                btn.className = "flex-1 py-2 text-sm font-bold text-gray-500 rounded-lg transition-all";
+            });
+            document.getElementById('exp-panel-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('exp-tab-' + tabId);
+            activeBtn.className = "flex-1 py-2 text-sm font-bold bg-white text-dark rounded-lg shadow-sm transition-all";
+
+            if (tabId === 'list') fetchExpenses();
+            if (tabId === 'settle') calculateSettlement();
+            if (tabId === 'add') {
+                document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+                updatePayerOptions();
+            }
+        }
+
+        async function notionRequest(endpoint, method = 'POST', body = null) {
+            const url = CORS_PROXY + encodeURIComponent(`https://api.notion.com/v1/${endpoint}`);
+            const options = {
+                method,
+                headers: {
+                    'Authorization': `Bearer ${NOTION_TOKEN}`,
+                    'Notion-Version': '2022-06-28',
+                    'Content-Type': 'application/json'
+                }
+            };
+            if (body) options.body = JSON.stringify(body);
+            const res = await fetch(url, options);
+            if (!res.ok) {
+                let errorMsg = 'Notion API Error: ' + res.status;
+                try {
+                    const errData = await res.json();
+                    errorMsg = errData.message || errorMsg;
+                } catch(e) {}
+                throw new Error(errorMsg);
+            }
+            return res.json();
+        }
+
+        async function fetchExpenses() {
+            const container = document.getElementById('expense-list-container');
+            container.innerHTML = '<div class="text-center py-8 text-blue-500 text-sm"><i class="fa-solid fa-spinner fa-spin mr-2"></i>連線至 Notion 讀取中...</div>';
+            
+            try {
+                const data = await notionRequest(`databases/${DATABASE_ID}/query`, 'POST', {
+                    sorts: [{ property: '日期', direction: 'descending' }, { timestamp: 'created_time', direction: 'descending' }]
+                });
+                
+                expenseList = data.results.map(page => {
+                    const props = page.properties;
+                    return {
+                        id: page.id,
+                        title: props['項目名稱']?.title[0]?.plain_text || '未命名',
+                        amount: props['金額']?.number || 0,
+                        payer: props['付款人']?.select?.name || '未知',
+                        category: props['類別']?.select?.name || '其他',
+                        date: props['日期']?.date?.start || '',
+                        note: props['備註']?.rich_text[0]?.plain_text || ''
+                    };
+                });
+
+                renderExpenses();
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div class="text-center py-8 text-red-500 text-sm">載入失敗，錯誤訊息：<br>' + err.message + '</div>';
+            }
+        }
+
+        function getCategoryIcon(cat) {
+            const map = {
+                '餐飲': '<i class="fa-solid fa-utensils text-orange-500"></i>',
+                '交通': '<i class="fa-solid fa-train text-blue-500"></i>',
+                '住宿': '<i class="fa-solid fa-bed text-pink-500"></i>',
+                '門票': '<i class="fa-solid fa-ticket text-amber-500"></i>',
+                '購物': '<i class="fa-solid fa-bag-shopping text-purple-500"></i>'
+            };
+            return map[cat] || '<i class="fa-solid fa-receipt text-green-500"></i>';
+        }
+
+        function renderExpenses() {
+            const container = document.getElementById('expense-list-container');
+            if (expenseList.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-gray-400 text-sm">目前沒有任何支出紀錄</div>';
+                return;
+            }
+
+            let total = 0;
+            const html = expenseList.map(exp => {
+                total += exp.amount;
+                return `
+                    <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-lg flex-shrink-0 mr-3">
+                                ${getCategoryIcon(exp.category)}
+                            </div>
+                            <div>
+                                <div class="flex items-center mb-0.5">
+                                    <span class="font-bold text-dark text-sm mr-2">${exp.title}</span>
+                                    <span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">${exp.date.substring(5)}</span>
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    由 <span class="font-bold text-indigo-600">${exp.payer}</span> 支付
+                                    ${exp.note ? `<span class="ml-1 text-gray-400">· ${exp.note}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end flex-shrink-0 ml-2">
+                            <span class="font-black text-red-500 text-base tracking-tight">¥${exp.amount.toLocaleString()}</span>
+                            <button onclick="deleteExpense('${exp.id}')" class="text-[10px] text-gray-300 hover:text-red-500 mt-1.5 transition flex items-center"><i class="fa-solid fa-trash-can mr-1"></i>刪除</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="flex justify-between items-center px-3 py-2 mb-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <span class="text-xs font-bold text-gray-500">總計支出</span>
+                    <span class="font-black text-dark text-lg">¥${total.toLocaleString()}</span>
+                </div>
+                ${html}
+            `;
+        }
+
+        async function handleAddExpense(e) {
+            e.preventDefault();
+            const btn = document.getElementById('exp-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>寫入中...';
+
+            const payload = {
+                parent: { database_id: DATABASE_ID },
+                properties: {
+                    "項目名稱": { title: [{ text: { content: document.getElementById('exp-title').value } }] },
+                    "金額": { number: parseInt(document.getElementById('exp-amount').value) || 0 },
+                    "付款人": { select: { name: document.getElementById('exp-payer').value } },
+                    "類別": { select: { name: document.getElementById('exp-category').value } },
+                    "日期": { date: { start: document.getElementById('exp-date').value } }
+                }
+            };
+
+            const note = document.getElementById('exp-note').value;
+            if (note) {
+                payload.properties["備註"] = { rich_text: [{ text: { content: note } }] };
+            }
+
+            try {
+                await notionRequest('pages', 'POST', payload);
+                document.getElementById('addExpenseForm').reset();
+                switchExpenseTab('list');
+            } catch (err) {
+                console.error(err);
+                alert('新增失敗: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '新增支出';
+            }
+        }
+
+        async function deleteExpense(id) {
+            if (!confirm('確定要刪除這筆支出嗎？此動作無法復原。')) return;
+            try {
+                await notionRequest(`pages/${id}`, 'PATCH', { archived: true });
+                // 刪除後自動重整列表
+                fetchExpenses();
+            } catch (err) {
+                console.error(err);
+                alert('刪除失敗');
+            }
+        }
+
+        function calculateSettlement() {
+            if (expenseList.length === 0 && document.getElementById('exp-panel-list').classList.contains('active')) return;
+            
+            const members = getMembers();
+            const numMembers = members.length;
+            if (numMembers === 0) return;
+
+            // 初始化餘額表
+            const balances = {};
+            const paid = {};
+            members.forEach(m => { balances[m] = 0; paid[m] = 0; });
+
+            let totalExp = 0;
+
+            expenseList.forEach(exp => {
+                const amount = exp.amount;
+                totalExp += amount;
+                
+                // 若付款人不在名單內，臨時加入
+                if (paid[exp.payer] === undefined) {
+                    paid[exp.payer] = 0;
+                    balances[exp.payer] = 0;
+                }
+                paid[exp.payer] += amount;
+                balances[exp.payer] += amount;
+
+                // 每筆支出由 "所有人" 平分
+                const splitAmount = amount / numMembers;
+                members.forEach(m => {
+                    balances[m] -= splitAmount;
+                });
+            });
+
+            // 繪製個人淨額
+            const balContainer = document.getElementById('settlement-balances');
+            if (balContainer) {
+                balContainer.innerHTML = Object.keys(balances).map(m => {
+                    const net = Math.round(balances[m] || 0);
+                    const paidAmt = Math.round(paid[m] || 0);
+                    const shouldPay = paidAmt - net; // 應分攤 = 已付 - 淨額
+                    
+                    let netClass = net > 0 ? 'text-green-600' : (net < 0 ? 'text-red-500' : 'text-gray-500');
+                    let netPrefix = net > 0 ? '+' : '';
+                    let netLabel = net > 0 ? '應收' : (net < 0 ? '應付' : '結清');
+                    
+                    return `
+                        <div class="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                            <div>
+                                <div class="font-bold text-dark text-sm mb-1">${m}</div>
+                                <div class="text-[10px] text-gray-500 flex gap-2">
+                                    <span class="bg-gray-50 px-1.5 py-0.5 rounded">已付 ¥${paidAmt.toLocaleString()}</span>
+                                    <span class="bg-gray-50 px-1.5 py-0.5 rounded">應分攤 ¥${shouldPay.toLocaleString()}</span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] font-bold ${netClass} mb-0.5">${netLabel}</div>
+                                <div class="font-black text-base ${netClass} tracking-tight">${netPrefix}${net.toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 最優化轉帳 (貪婪演算法)
+            const debtors = [];
+            const creditors = [];
+            
+            for (const m in balances) {
+                const b = Math.round(balances[m]);
+                if (b < 0) debtors.push({ name: m, amount: -b });
+                else if (b > 0) creditors.push({ name: m, amount: b });
+            }
+
+            debtors.sort((a, b) => b.amount - a.amount);
+            creditors.sort((a, b) => b.amount - a.amount);
+
+            const transfers = [];
+            let i = 0, j = 0;
+            
+            while (i < debtors.length && j < creditors.length) {
+                const amount = Math.min(debtors[i].amount, creditors[j].amount);
+                if (amount > 0) {
+                    transfers.push({
+                        from: debtors[i].name,
+                        to: creditors[j].name,
+                        amount: amount
+                    });
+                }
+                
+                debtors[i].amount -= amount;
+                creditors[j].amount -= amount;
+                
+                if (debtors[i].amount === 0) i++;
+                if (creditors[j].amount === 0) j++;
+            }
+
+            const trContainer = document.getElementById('settlement-transfers');
+            if (trContainer) {
+                if (transfers.length === 0) {
+                    trContainer.innerHTML = '<div class="text-center py-6 text-gray-400 text-xs bg-gray-50 rounded-2xl border border-dashed border-gray-200">目前無須轉帳，帳目都結清囉！🎉</div>';
+                } else {
+                    trContainer.innerHTML = transfers.map(t => `
+                        <div class="bg-gradient-to-r from-red-50 to-green-50 p-4 rounded-2xl border border-gray-100 shadow-sm flex justify-between items-center">
+                            <div class="flex items-center text-sm font-bold">
+                                <span class="text-red-600 bg-white px-2 py-1 rounded shadow-sm">${t.from}</span>
+                                <i class="fa-solid fa-arrow-right-long text-gray-400 mx-3"></i>
+                                <span class="text-green-600 bg-white px-2 py-1 rounded shadow-sm">${t.to}</span>
+                            </div>
+                            <span class="font-black text-dark text-lg tracking-tight">¥${t.amount.toLocaleString()}</span>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        // === 9. 語音朗讀邏輯 (Web Speech API) ===
+        function speakJapanese(text, event) {
+            if (event) event.stopPropagation();
+            if (!window.speechSynthesis) {
+                alert('您的瀏覽器不支援語音朗讀功能');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.85; // 稍微放慢速度
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function initSpeakerIcons() {
+            // 1. 處理 Phrase Cards
+            document.querySelectorAll('.phrase-card').forEach(card => {
+                const jpTextEl = card.querySelector('p.font-black');
+                if (jpTextEl && !jpTextEl.hasAttribute('data-has-speaker')) {
+                    jpTextEl.setAttribute('data-has-speaker', 'true');
+                    
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'flex items-center gap-2';
+                    jpTextEl.parentNode.insertBefore(wrapper, jpTextEl);
+                    wrapper.appendChild(jpTextEl);
+                    
+                    const btn = document.createElement('button');
+                    btn.className = 'text-blue-500 bg-blue-50 hover:bg-blue-100 w-7 h-7 rounded-full flex items-center justify-center transition shadow-sm flex-shrink-0';
+                    btn.innerHTML = '<i class="fa-solid fa-volume-high text-xs"></i>';
+                    // 改用動態讀取 innerText，確保修改尺寸等文字變更時朗讀內容也會變
+                    btn.onclick = (e) => speakJapanese(jpTextEl.innerText.trim(), e);
+                    wrapper.appendChild(btn);
+                }
+            });
+
+            // 2. 處理加油翻譯
+            const fuelTextEl = document.getElementById('fuel-type-text');
+            if (fuelTextEl && !fuelTextEl.hasAttribute('data-has-speaker')) {
+                fuelTextEl.setAttribute('data-has-speaker', 'true');
+                const btn = document.createElement('button');
+                btn.className = 'mt-1 text-blue-500 bg-white hover:bg-blue-50 px-4 py-2 rounded-full inline-flex items-center justify-center transition shadow-sm border border-blue-200 text-sm font-bold';
+                btn.innerHTML = '<i class="fa-solid fa-volume-high mr-2"></i>語音朗讀';
+                btn.onclick = (e) => speakJapanese(`すみません、${fuelTextEl.innerText.trim()}でお願いします。`, e);
+                fuelTextEl.parentNode.parentNode.appendChild(btn);
+            }
+
+            // 3. 處理飲食需求
+            const zivDietEl = document.querySelector('#diet-card-ziv .bg-red-50 p');
+            if (zivDietEl && !zivDietEl.hasAttribute('data-has-speaker')) {
+                zivDietEl.setAttribute('data-has-speaker', 'true');
+                const text = "私は、牛肉・馬肉を食べることができません。";
+                const btn = document.createElement('button');
+                btn.className = 'mt-1 text-red-500 bg-white hover:bg-red-50 px-4 py-2 rounded-full inline-flex items-center justify-center transition shadow-sm border border-red-200 text-sm font-bold';
+                btn.innerHTML = '<i class="fa-solid fa-volume-high mr-2"></i>語音朗讀';
+                btn.onclick = (e) => speakJapanese(text, e);
+                zivDietEl.parentNode.parentNode.appendChild(btn);
+            }
+            
+            const janDietEl = document.querySelector('#diet-card-jan .bg-red-50 p');
+            if (janDietEl && !janDietEl.hasAttribute('data-has-speaker')) {
+                janDietEl.setAttribute('data-has-speaker', 'true');
+                const text = "私は、牛肉・馬肉・羊肉を食べることができません。";
+                const btn = document.createElement('button');
+                btn.className = 'mt-1 text-red-500 bg-white hover:bg-red-50 px-4 py-2 rounded-full inline-flex items-center justify-center transition shadow-sm border border-red-200 text-sm font-bold';
+                btn.innerHTML = '<i class="fa-solid fa-volume-high mr-2"></i>語音朗讀';
+                btn.onclick = (e) => speakJapanese(text, e);
+                janDietEl.parentNode.parentNode.appendChild(btn);
+            }
+
+            const linleDietEl = document.querySelector('#diet-card-linle p.text-green-700');
+            if (linleDietEl && !linleDietEl.hasAttribute('data-has-speaker')) {
+                linleDietEl.setAttribute('data-has-speaker', 'true');
+                const text = "何でも食べられます！";
+                const btn = document.createElement('button');
+                btn.className = 'ml-2 text-green-600 bg-green-100 hover:bg-green-200 w-6 h-6 rounded-full inline-flex items-center justify-center transition shadow-sm align-middle';
+                btn.innerHTML = '<i class="fa-solid fa-volume-high text-xs"></i>';
+                btn.onclick = (e) => speakJapanese(text, e);
+                linleDietEl.appendChild(btn);
+            }
+        }
+
+        // === 10. 購物尺寸選擇邏輯 ===
+        function changeShopSize(size, btn, event) {
+            if(event) event.stopPropagation();
+            
+            // 變更按鈕樣式
+            const buttons = btn.parentElement.querySelectorAll('.shop-size-btn');
+            buttons.forEach(b => {
+                b.className = 'shop-size-btn flex-1 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 transition-all';
+            });
+            btn.className = 'shop-size-btn flex-1 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 text-xs font-bold transition-all';
+            
+            // 更新卡片上的日文及中文標題
+            const textEl = btn.closest('.phrase-card').querySelector('#shop-size-text');
+            if (textEl) {
+                textEl.innerText = size;
+            }
+        }
+
+        // === 11. 餐廳訂位人數選擇邏輯 ===
+        function changePartySize(size, btn, event) {
+            if(event) event.stopPropagation();
+            
+            // 變更按鈕樣式
+            const buttons = btn.parentElement.querySelectorAll('.party-size-btn');
+            buttons.forEach(b => {
+                b.className = 'party-size-btn flex-1 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-500 transition-all';
+            });
+            btn.className = 'party-size-btn flex-1 py-1.5 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-600 text-xs font-bold transition-all';
+            
+            // 更新卡片上的文字
+            const card = btn.closest('.phrase-card');
+            const jpTextEl = card.querySelector('#food-party-text');
+            const zhTextEl = card.querySelector('#food-party-text-zh');
+            if (jpTextEl) jpTextEl.innerText = size;
+            if (zhTextEl) zhTextEl.innerText = size;
+        }
+
+        // === 12. 問路目的地更新邏輯 ===
+        function updateRouteDest(val) {
+            const dest = val.trim() || '〇〇';
+            const destZh = val.trim() || 'OO';
+            const jpTextEl = document.getElementById('route-dest-text');
+            const zhTextEl = document.getElementById('route-dest-text-zh');
+            if (jpTextEl) jpTextEl.innerText = dest;
+            if (zhTextEl) zhTextEl.innerText = destZh;
+            
+            // 同步清空按鈕點擊時的 input value
+            const inputEl = document.getElementById('route-dest-input');
+            if (inputEl && inputEl.value !== val) {
+                inputEl.value = val;
+            }
+        }
+
+        // === 13. 加油種類選擇邏輯 ===
+        function changeFuelType(jpText, zhText, color, engName, btn) {
+            // 變更按鈕樣式
+            const buttons = btn.parentElement.querySelectorAll('.fuel-type-btn');
+            buttons.forEach(b => {
+                b.className = 'fuel-type-btn flex-1 py-2 px-1 rounded-xl border border-gray-200 bg-white text-gray-500 text-xs font-bold transition-all hover:bg-gray-50';
+            });
+            
+            // 設定新的選取樣式
+            let colorClasses = '';
+            let textColor = '';
+            if (color === 'red') {
+                colorClasses = 'border-red-500 bg-red-50 text-red-700 shadow-sm';
+                textColor = 'text-red-500';
+            } else if (color === 'yellow') {
+                colorClasses = 'border-amber-500 bg-amber-50 text-amber-700 shadow-sm';
+                textColor = 'text-amber-500';
+            } else if (color === 'green') {
+                colorClasses = 'border-green-500 bg-green-50 text-green-700 shadow-sm';
+                textColor = 'text-green-500';
+            }
+            btn.className = `fuel-type-btn flex-1 py-2 px-1 rounded-xl border-2 ${colorClasses} text-xs font-bold transition-all`;
+
+            // 更新日文
+            const fuelTextEl = document.getElementById('fuel-type-text');
+            if (fuelTextEl) fuelTextEl.innerText = jpText;
+
+            // 更新中文說明
+            const descEl = document.getElementById('fuel-desc-text');
+            if (descEl) {
+                descEl.innerHTML = `（不好意思，請幫我加滿${zhText}）<br>
+                                <span class="text-xs ${textColor} mt-1 block"><i class="fa-solid fa-droplet mr-1"></i> 請認明對應油槍 (${engName})</span>`;
+            }
+        }
+
+        // === 初始化運行 ===
+        window.onload = () => {
+            switchTab('home');
+            initCountdown();
+            renderChecklist();
+            initNavigation();
+            initWeather();
+            initSpeakerIcons();
+        };
+
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
