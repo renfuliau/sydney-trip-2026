@@ -909,7 +909,7 @@
                     <h3 class="font-bold mb-4 flex items-center text-lg">
                         <i class="fa-solid fa-calculator mr-2 text-yellow-300"></i>匯率閃電換算 (AUD)
                     </h3>
-                    <p class="text-xs text-blue-200 mb-4 tracking-wide">參考匯率：21.5 (自動四捨五入)</p>
+                    <p id="exchangeRateText" class="text-xs text-blue-200 mb-4 tracking-wide">載入即時匯率中...</p>
                     
                     <div class="flex flex-col space-y-3 relative z-10">
                         <div class="relative">
@@ -1084,6 +1084,23 @@
         }
 
         // === 3. 匯率換算邏輯 ===
+        let currentAudRate = 21.5; // 預設值
+
+        async function initCurrency() {
+            try {
+                const res = await fetch('https://open.er-api.com/v6/latest/AUD');
+                const data = await res.json();
+                if (data && data.rates && data.rates.TWD) {
+                    currentAudRate = data.rates.TWD;
+                    document.getElementById('exchangeRateText').innerText = `參考即時匯率：${currentAudRate.toFixed(2)} (自動四捨五入)`;
+                    convertCurrency(); // 重新計算
+                }
+            } catch (err) {
+                console.error('Failed to fetch exchange rate:', err);
+                document.getElementById('exchangeRateText').innerText = `無法取得即時匯率，使用預設值：${currentAudRate}`;
+            }
+        }
+
         function convertCurrency() {
             const inputVal = document.getElementById('audInput').value;
             const outputEl = document.getElementById('twdOutput');
@@ -1092,8 +1109,7 @@
                 outputEl.innerText = '0';
                 return;
             }
-            // 匯率 21.5
-            const twd = Math.round(inputVal * 21.5);
+            const twd = Math.round(inputVal * currentAudRate);
             outputEl.innerText = twd.toLocaleString();
         }
 
@@ -1336,6 +1352,7 @@
             renderChecklist();
             initNavigation();
             initWeather();
+            initCurrency();
         };
 
     </script>
