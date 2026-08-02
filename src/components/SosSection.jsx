@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const SosSection = () => {
-  const [activeTab, setActiveTab] = useState('food'); // 'food' | 'medical'
+  const [activeTab, setActiveTab] = useState('medical'); // 'food' | 'medical'
   const [selectedPerson, setSelectedPerson] = useState('ziv'); // 'linle' | 'ziv' | 'jan'
 
   // 語音發音函數
@@ -61,8 +61,8 @@ const SosSection = () => {
         <p className="text-xs text-slate-500 mt-1">遇到緊急狀況或用餐時，可直接展示此卡片</p>
       </div>
 
-      {/* Tab 切換 */}
-      <div className="flex bg-slate-200/70 p-1 rounded-2xl">
+      {/* Tab 切換 (隱藏) */}
+      <div className="hidden bg-slate-200/70 p-1 rounded-2xl">
         <button
           onClick={() => setActiveTab('food')}
           className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${

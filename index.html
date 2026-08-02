@@ -855,54 +855,74 @@
         <!-- SECTION: 實用工具 (Tools) -->
         <!-- ======================= -->
         <section id="tools" class="section-content pt-16 pb-24 px-5 min-h-screen">
+            
+            <!-- Tool Tabs -->
+            <div class="flex bg-slate-200/70 p-1 rounded-2xl mb-5">
+                <button onclick="switchToolTab('translator')" id="tool-tab-translator" class="tool-tab-btn flex-1 py-2 px-1 rounded-xl text-[11px] font-bold transition-all bg-white text-sky-700 shadow-sm flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-language text-lg"></i> 翻譯助手
+                </button>
+                <button onclick="switchToolTab('currency')" id="tool-tab-currency" class="tool-tab-btn flex-1 py-2 px-1 rounded-xl text-[11px] font-bold transition-all text-slate-600 hover:text-slate-900 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-calculator text-lg"></i> 匯率換算
+                </button>
+                <button onclick="switchToolTab('checklist')" id="tool-tab-checklist" class="tool-tab-btn flex-1 py-2 px-1 rounded-xl text-[11px] font-bold transition-all text-slate-600 hover:text-slate-900 flex flex-col items-center gap-1">
+                    <i class="fa-solid fa-suitcase text-lg"></i> 行前清單
+                </button>
+            </div>
+
             <!-- React 模組: 語音翻譯與對話助手 -->
-            <div id="translator-root" class="mb-6"></div>
+            <div id="tool-content-translator" class="tool-content active animate-[fadeIn_0.3s_ease-out]">
+                <div id="translator-root" class="mb-6"></div>
+            </div>
 
             <!-- 匯率換算機 -->
-            <div class="bg-gradient-to-br from-cyan-600 to-blue-700 p-6 rounded-3xl shadow-lg relative overflow-hidden mb-6 text-white">
-                <!-- 裝飾背景圖案 -->
-                <i class="fa-solid fa-dollar-sign absolute -right-2 -bottom-2 text-8xl opacity-10 transform -rotate-12"></i>
-                
-                <h3 class="font-bold mb-4 flex items-center text-lg">
-                    <i class="fa-solid fa-calculator mr-2 text-yellow-300"></i>匯率閃電換算 (AUD)
-                </h3>
-                <p class="text-xs text-blue-200 mb-4 tracking-wide">參考匯率：21.5 (自動四捨五入)</p>
-                
-                <div class="flex flex-col space-y-3 relative z-10">
-                    <div class="relative">
-                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-dark font-bold">A$</span>
-                        <input type="number" id="audInput" oninput="convertCurrency()" placeholder="輸入澳幣金額" class="w-full bg-white text-dark text-lg font-bold rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-4 focus:ring-cyan-300/50 transition">
-                    </div>
+            <div id="tool-content-currency" class="tool-content hidden">
+                <div class="bg-gradient-to-br from-cyan-600 to-blue-700 p-6 rounded-3xl shadow-lg relative overflow-hidden mb-6 text-white">
+                    <!-- 裝飾背景圖案 -->
+                    <i class="fa-solid fa-dollar-sign absolute -right-2 -bottom-2 text-8xl opacity-10 transform -rotate-12"></i>
                     
-                    <div class="flex justify-center -my-1 z-20">
-                        <div class="bg-yellow-400 text-dark w-8 h-8 rounded-full flex items-center justify-center border-4 border-blue-600 shadow-sm">
-                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                    <h3 class="font-bold mb-4 flex items-center text-lg">
+                        <i class="fa-solid fa-calculator mr-2 text-yellow-300"></i>匯率閃電換算 (AUD)
+                    </h3>
+                    <p class="text-xs text-blue-200 mb-4 tracking-wide">參考匯率：21.5 (自動四捨五入)</p>
+                    
+                    <div class="flex flex-col space-y-3 relative z-10">
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-dark font-bold">A$</span>
+                            <input type="number" id="audInput" oninput="convertCurrency()" placeholder="輸入澳幣金額" class="w-full bg-white text-dark text-lg font-bold rounded-xl py-3 pl-10 pr-4 outline-none focus:ring-4 focus:ring-cyan-300/50 transition">
                         </div>
-                    </div>
+                        
+                        <div class="flex justify-center -my-1 z-20">
+                            <div class="bg-yellow-400 text-dark w-8 h-8 rounded-full flex items-center justify-center border-4 border-blue-600 shadow-sm">
+                                <i class="fa-solid fa-arrow-down text-xs"></i>
+                            </div>
+                        </div>
 
-                    <div class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4 flex justify-between items-center">
-                        <span class="text-sm font-medium">換算台幣</span>
-                        <div class="text-2xl font-black tracking-tight flex items-baseline">
-                            <span class="text-sm mr-1 font-normal">NT$</span>
-                            <span id="twdOutput">0</span>
+                        <div class="bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl p-4 flex justify-between items-center">
+                            <span class="text-sm font-medium">換算台幣</span>
+                            <div class="text-2xl font-black tracking-tight flex items-baseline">
+                                <span class="text-sm mr-1 font-normal">NT$</span>
+                                <span id="twdOutput">0</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- 出發前打包清單 -->
-            <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-gray-800 flex items-center text-lg">
-                        <i class="fa-solid fa-suitcase mr-2 text-teal-500"></i>行前確認清單
-                    </h3>
-                    <button onclick="resetChecklist()" class="text-xs text-gray-400 hover:text-red-500 underline transition">
-                        重置
-                    </button>
-                </div>
-                
-                <div class="space-y-1" id="checklist">
-                    <!-- 動態生成選項 -->
+            <div id="tool-content-checklist" class="tool-content hidden">
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-gray-800 flex items-center text-lg">
+                            <i class="fa-solid fa-suitcase mr-2 text-teal-500"></i>行前確認清單
+                        </h3>
+                        <button onclick="resetChecklist()" class="text-xs text-gray-400 hover:text-red-500 underline transition">
+                            重置
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-1" id="checklist">
+                        <!-- 動態生成選項 -->
+                    </div>
                 </div>
             </div>
             
@@ -940,11 +960,11 @@
             <!-- SOS -->
             <button onclick="switchTab('sos')" class="nav-item flex flex-col items-center flex-1 pb-3 relative" id="tab-sos">
                 <i class="fa-solid fa-heart-pulse text-xl mb-1 block"></i>
-                <span class="text-[10px] font-bold tracking-wide">飲食需求</span>
+                <span class="text-[10px] font-bold tracking-wide">緊急求助</span>
             </button>
             
             <!-- Expense -->
-            <button onclick="switchTab('expense')" class="nav-item flex flex-col items-center flex-1 pb-3" id="tab-expense">
+            <button onclick="switchTab('expense')" class="nav-item flex flex-col items-center flex-1 pb-3 hidden" id="tab-expense">
                 <i class="fa-solid fa-file-invoice-dollar text-xl mb-1 block"></i>
                 <span class="text-[10px] font-bold tracking-wide">記帳本</span>
             </button>
@@ -971,6 +991,25 @@
             'sos': '', 
             'tools': '旅行實用工具'
         };
+
+        // === 工具區塊 Tab 切換邏輯 ===
+        function switchToolTab(tabId) {
+            document.querySelectorAll('.tool-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('active', 'animate-[fadeIn_0.3s_ease-out]');
+            });
+            const target = document.getElementById('tool-content-' + tabId);
+            target.classList.remove('hidden');
+            // Trigger reflow to restart animation
+            void target.offsetWidth;
+            target.classList.add('active', 'animate-[fadeIn_0.3s_ease-out]');
+
+            document.querySelectorAll('.tool-tab-btn').forEach(btn => {
+                btn.className = "tool-tab-btn flex-1 py-2 px-1 rounded-xl text-[11px] font-bold transition-all text-slate-600 hover:text-slate-900 flex flex-col items-center gap-1";
+            });
+            const activeBtn = document.getElementById('tool-tab-' + tabId);
+            activeBtn.className = "tool-tab-btn flex-1 py-2 px-1 rounded-xl text-[11px] font-bold transition-all bg-white text-sky-700 shadow-sm flex flex-col items-center gap-1";
+        }
 
         function switchTab(tabId) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
