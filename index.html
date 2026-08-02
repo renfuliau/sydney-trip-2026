@@ -845,72 +845,19 @@
         </section>
 
         <!-- ======================= -->
-        <!-- SECTION: 飲食SOS (SOS)  -->
+        <!-- SECTION: 飲食SOS / 醫療急救 (SOS) -->
         <!-- ======================= -->
-        <section id="sos" class="section-content pt-16 pb-6 px-5 h-screen">
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-black text-dark">飲食需求卡</h2>
-                <p class="text-sm text-gray-500 mt-1">點餐時請直接將此畫面出示給服務人員</p>
-            </div>
-
-            <!-- SOS 閃爍卡片 -->
-            <div class="sos-card bg-white rounded-3xl shadow-xl overflow-hidden border-2 border-primary relative">
-                <!-- 裝飾折角 -->
-                <div class="absolute -top-6 -right-6 w-16 h-16 bg-blue-100 rotate-45 transform origin-bottom-left"></div>
-                
-                <div class="bg-primary py-3 px-5 text-center">
-                    <span class="text-white font-black tracking-widest text-lg"><i class="fa-solid fa-circle-exclamation mr-2"></i>DIETARY REQUIREMENTS</span>
-                </div>
-                
-                <div class="p-6">
-                    <div class="text-center space-y-4">
-                        <p class="text-xl font-bold text-dark leading-relaxed">
-                            We cannot eat
-                        </p>
-                        <div class="bg-blue-50 py-3 rounded-xl border border-blue-100 transform rotate-1 my-4">
-                            <p class="text-2xl font-black text-blue-700 underline decoration-blue-300 decoration-4 underline-offset-4">
-                                Beef, Lamb, Mutton
-                            </p>
-                        </div>
-                        <p class="text-lg font-medium text-gray-600 leading-relaxed italic">
-                            (No red meat exceptions)
-                        </p>
-                    </div>
-                    
-                    <div class="my-6 border-b border-dashed border-gray-300"></div>
-                    
-                    <div class="flex items-center justify-center bg-green-50 p-4 rounded-xl text-center">
-                        <i class="fa-solid fa-circle-check text-green-500 text-xl mr-3"></i>
-                        <p class="text-base font-bold text-green-800">
-                            Pork, Chicken, Seafood & Vegetables<br>
-                            <span class="text-sm font-medium">are perfectly fine!</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 避開關鍵字 -->
-            <div class="mt-8 bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="text-sm font-bold text-gray-800 mb-3 border-b border-gray-100 pb-2">
-                    <span class="text-red-500 mr-1">❌</span> 菜單避雷字眼 (含有牛羊)
-                </h3>
-                <div class="grid grid-cols-2 gap-3 mt-3">
-                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐮 Beef (牛肉)</div>
-                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🥩 Steak (牛排)</div>
-                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐑 Lamb (小羊肉)</div>
-                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐑 Mutton (羊肉)</div>
-                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🐮 Veal (小牛肉)</div>
-                    <div class="bg-red-50 text-red-800 text-sm font-bold p-3 rounded-xl text-center border shadow-sm border-red-100">🍔 Wagyu (和牛)</div>
-                </div>
-            </div>
-            
-            <div class="h-10"></div>
+        <section id="sos" class="section-content pt-16 pb-24 px-5 min-h-screen">
+            <div id="sos-root"></div>
         </section>
 
         <!-- ======================= -->
         <!-- SECTION: 實用工具 (Tools) -->
         <!-- ======================= -->
-        <section id="tools" class="section-content pt-16 pb-6 px-5 min-h-screen">
+        <section id="tools" class="section-content pt-16 pb-24 px-5 min-h-screen">
+            <!-- React 模組: 語音翻譯與對話助手 -->
+            <div id="translator-root" class="mb-6"></div>
+
             <!-- 匯率換算機 -->
             <div class="bg-gradient-to-br from-cyan-600 to-blue-700 p-6 rounded-3xl shadow-lg relative overflow-hidden mb-6 text-white">
                 <!-- 裝飾背景圖案 -->
