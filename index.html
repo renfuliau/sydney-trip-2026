@@ -298,6 +298,20 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- 行前打包與重要須知 -->
+            <div>
+                <h3 class="text-sm font-bold text-gray-500 mb-3 ml-1 mt-6 flex items-center">
+                    <i class="fa-solid fa-suitcase-rolling mr-2"></i>行前準備與提醒
+                </h3>
+                <div class="bg-yellow-50 rounded-2xl shadow-sm border border-yellow-100 p-4">
+                    <p class="text-xs text-yellow-800 font-medium leading-relaxed">
+                        💡 <strong>Day 5 熱氣球搭乘提醒：</strong><br/>
+                        清晨草地可能有露水，請務必準備<strong>平底且包覆腳部的鞋子</strong>（嚴禁高跟鞋）。<br/>
+                        另外，不建議穿著白色衣物或鞋子，以免弄髒喔！
+                    </p>
+                </div>
+            </div>
         </section>
 
         <!-- ======================= -->
@@ -576,6 +590,25 @@
                             <p class="text-xs font-bold text-primary tracking-widest mb-1">04:00 – 08:30</p>
                             <h4 class="font-bold text-dark text-sm">體驗：獵人谷日出熱氣球</h4>
                             <p class="text-xs text-gray-500 mt-1">Balloon Aloft ⚠️ 必須預約。升空迎日出，07:30 享用香檳早餐。</p>
+                            
+                            <!-- 搭乘注意事項 Accordion -->
+                            <div class="mt-3">
+                                <button onclick="this.nextElementSibling.classList.toggle('hidden'); this.querySelector('.fa-chevron-down').classList.toggle('rotate-180')" class="w-full text-left bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 rounded-xl text-xs font-bold flex justify-between items-center transition-all hover:bg-orange-100 shadow-sm">
+                                    <span>⚠️ 點擊查看熱氣球搭乘須知 (必讀)</span>
+                                    <i class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                                </button>
+                                <div class="hidden mt-2 bg-white border border-gray-100 rounded-xl p-3 text-[11px] text-gray-600 leading-relaxed shadow-sm">
+                                    <ul class="space-y-2 list-disc pl-4 marker:text-orange-400">
+                                        <li><strong>禁止吸菸：</strong>飛行期間嚴禁吸菸，包括打火機、火柴與電子菸皆需留在車內/房間，出發前個人物品會被收集保管。</li>
+                                        <li><strong>穿鞋要求：</strong>需穿平底且包覆腳部的鞋子，<span class="text-red-500 font-bold">禁止穿高跟鞋</span>，以便在不平整或長草地行走。</li>
+                                        <li><strong>著裝要求：</strong>請穿合適戶外服裝。不建議穿白色衣服/鞋子，否則需自行承擔弄髒風險。</li>
+                                        <li><strong>相機手機：</strong>飛行中可使用（除非工作人員另有指示），但須自負安全責任；飛行中不得接聽電話或放音樂。</li>
+                                        <li><strong>洗手間設施：</strong>請在出發前使用飯店洗手間，飛行期間無廁所設施。</li>
+                                        <li><strong>禁止隨行人員：</strong>未購票人員不得跟隨或進入起降地點，違反者視為非法入侵。</li>
+                                        <li><strong>葡萄園生物安全：</strong>請勿在葡萄藤間行走或觸摸葡萄藤，以防傳播害蟲與疾病，保護生態。</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                         <div class="timeline-item">
                             <p class="text-xs font-bold text-gray-400 tracking-widest mb-1">09:30 – 11:30</p>
