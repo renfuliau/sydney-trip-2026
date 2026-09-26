@@ -1402,9 +1402,505 @@
             initNavigation();
             initWeather();
             initCurrency();
+            initSosSection();
+            initVoiceTranslator();
+            initExpenseTracker();
         };
 
     </script>
-    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- ======================= -->
+    <!-- SOS Section (Vanilla JS) -->
+    <!-- ======================= -->
+    <script>
+    function initSosSection() {
+        const root = document.getElementById('sos-root');
+        if (!root) return;
+
+        let activeTab = 'medical';
+        let selectedPerson = 'ziv';
+
+        const emergencyPhrases = [
+            { en: "Please call an ambulance immediately!", zh: "請立刻幫我叫救護車！" },
+            { en: "I need to see a doctor right now.", zh: "我現在需要看醫生。" },
+            { en: "Where is the nearest hospital emergency room?", zh: "請問最近的醫院急診室在哪裡？" },
+            { en: "I am having a severe allergic reaction.", zh: "我有嚴重的過敏反應。" },
+            { en: "Do you have anyone here who speaks Chinese?", zh: "請問這裡有會說中文的人員嗎？" }
+        ];
+
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) { alert('您的瀏覽器不支援語音合成功能'); return; }
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-AU'; u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+        }
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert('已複製英文句子：\n' + text);
+        }
+
+        function renderSos() {
+            const foodCard = (person) => {
+                const cards = {
+                    linle: `<div class="bg-white rounded-3xl shadow-lg border-2 border-emerald-400 overflow-hidden">
+                        <div class="bg-emerald-500 text-white py-2.5 px-4 text-center font-black text-base"><i class="fa-solid fa-user-check mr-2"></i>霖 &amp; 樂 — 飲食無限制</div>
+                        <div class="p-5 text-center space-y-3">
+                            <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                                <p class="text-lg font-black text-emerald-800">I have no dietary restrictions!</p>
+                                <p class="text-xs text-emerald-600 mt-1">我沒有任何飲食限制，什麼都可以吃！</p>
+                            </div>
+                            <p class="text-xs text-slate-500">Beef, Pork, Lamb, Chicken, Seafood &amp; Vegetables are all OK!</p>
+                            <button onclick="sosSpeakLinle()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition mx-auto"><i class="fa-solid fa-volume-high"></i> 朗讀發音</button>
+                        </div></div>`,
+                    ziv: `<div class="bg-white rounded-3xl shadow-lg border-2 border-red-500 overflow-hidden">
+                        <div class="bg-red-500 text-white py-2.5 px-4 text-center font-black text-base"><i class="fa-solid fa-ban mr-2"></i>Ziv — Dietary Request</div>
+                        <div class="p-5 space-y-4">
+                            <div class="text-center">
+                                <p class="text-sm font-bold text-slate-500">Excuse me, I cannot eat:</p>
+                                <div class="bg-red-50 p-3 rounded-2xl border border-red-200 my-2">
+                                    <p class="text-2xl font-black text-red-600">BEEF &amp; HORSE MEAT</p>
+                                    <p class="text-xs text-red-500 font-bold mt-0.5">（我不吃牛肉與馬肉）</p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200 text-center">
+                                <p class="text-xs font-bold text-emerald-800">Pork, Chicken, <span class="underline font-black">Lamb/Mutton</span>, Seafood &amp; Vegetables are OK!</p>
+                                <p class="text-[11px] text-emerald-600 mt-0.5">（豬肉、雞肉、羊肉、海鮮及蔬菜皆可以吃）</p>
+                            </div>
+                            <div class="flex justify-center gap-2">
+                                <button onclick="sosSpeakZiv()" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-volume-high"></i> 朗讀英文</button>
+                                <button onclick="sosCopyZiv()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> 複製</button>
+                            </div>
+                        </div></div>`,
+                    jan: `<div class="bg-white rounded-3xl shadow-lg border-2 border-red-500 overflow-hidden">
+                        <div class="bg-red-500 text-white py-2.5 px-4 text-center font-black text-base"><i class="fa-solid fa-ban mr-2"></i>Jan — Dietary Request</div>
+                        <div class="p-5 space-y-4">
+                            <div class="text-center">
+                                <p class="text-sm font-bold text-slate-500">Excuse me, I cannot eat:</p>
+                                <div class="bg-red-50 p-3 rounded-2xl border border-red-200 my-2">
+                                    <p class="text-2xl font-black text-red-600">BEEF, HORSE &amp; LAMB</p>
+                                    <p class="text-xs text-red-500 font-bold mt-0.5">（我不吃牛肉、馬肉及羊肉）</p>
+                                </div>
+                            </div>
+                            <div class="bg-emerald-50 p-3 rounded-2xl border border-emerald-200 text-center">
+                                <p class="text-xs font-bold text-emerald-800">Pork, Chicken, Seafood &amp; Vegetables are OK!</p>
+                                <p class="text-[11px] text-emerald-600 mt-0.5">（豬肉、雞肉、海鮮及蔬菜皆可以吃）</p>
+                            </div>
+                            <div class="flex justify-center gap-2">
+                                <button onclick="sosSpeakJan()" class="bg-red-500 hover:bg-red-600 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition"><i class="fa-solid fa-volume-high"></i> 朗讀英文</button>
+                                <button onclick="sosCopyJan()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1 transition"><i class="fa-regular fa-copy"></i> 複製</button>
+                            </div>
+                        </div></div>`
+                };
+                return cards[person] || '';
+            };
+
+            const phraseCards = emergencyPhrases.map((p, i) => `
+                <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-100 space-y-2">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-bold text-slate-800">${p.en}</p>
+                            <p class="text-xs text-sky-600 font-medium mt-0.5">${p.zh}</p>
+                        </div>
+                        <button onclick="sosSpeakPhrase(${i})" class="bg-sky-50 text-sky-600 hover:bg-sky-100 p-2 rounded-xl text-xs font-bold transition flex-shrink-0 ml-2"><i class="fa-solid fa-volume-high"></i></button>
+                    </div>
+                </div>`).join('');
+
+            root.innerHTML = `
+            <div class="space-y-5 pt-4">
+                <div class="text-center">
+                    <div class="inline-flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full text-xs font-bold mb-2 border border-red-100 shadow-sm">
+                        <i class="fa-solid fa-heart-pulse mr-1.5 animate-pulse"></i> SOS 緊急與醫療協助
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-800">求助與翻譯中心</h2>
+                    <p class="text-xs text-slate-500 mt-1">遇到緊急狀況或用餐時，可直接展示此卡片</p>
+                </div>
+
+                <!-- Tab -->
+                <div class="flex bg-slate-200/70 p-1 rounded-2xl">
+                    <button id="sos-tab-food" onclick="sosSwitchTab('food')" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab==='food'?'bg-white text-sky-700 shadow-sm':'text-slate-600'}">
+                        <i class="fa-solid fa-utensils"></i> 飲食翻譯卡
+                    </button>
+                    <button id="sos-tab-medical" onclick="sosSwitchTab('medical')" class="flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${activeTab==='medical'?'bg-red-500 text-white shadow-sm':'text-slate-600'}">
+                        <i class="fa-solid fa-hospital"></i> 醫療緊急救援
+                    </button>
+                </div>
+
+                <div id="sos-panel-food" class="${activeTab==='food'?'':'hidden'} space-y-4">
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="sosSelectPerson('linle')" class="flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 transition-all ${selectedPerson==='linle'?'border-emerald-500 bg-emerald-50 shadow-md':'border-slate-100 bg-white text-slate-500'}">
+                            <span class="text-2xl">😊</span>
+                            <span class="text-xs font-black text-emerald-800">霖 &amp; 樂</span>
+                            <span class="text-[10px] text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full font-bold">無限制</span>
+                        </button>
+                        <button onclick="sosSelectPerson('ziv')" class="flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 transition-all ${selectedPerson==='ziv'?'border-red-500 bg-red-50 shadow-md':'border-slate-100 bg-white text-slate-500'}">
+                            <span class="text-2xl">🙅</span>
+                            <span class="text-xs font-black text-slate-800">Ziv</span>
+                            <span class="text-[10px] text-red-600 bg-red-100 px-1.5 py-0.5 rounded-full font-bold">牛・馬 NG</span>
+                        </button>
+                        <button onclick="sosSelectPerson('jan')" class="flex flex-col items-center gap-1 py-3 px-2 rounded-2xl border-2 transition-all ${selectedPerson==='jan'?'border-red-500 bg-red-50 shadow-md':'border-slate-100 bg-white text-slate-500'}">
+                            <span class="text-2xl">🙅</span>
+                            <span class="text-xs font-black text-slate-800">Jan</span>
+                            <span class="text-[10px] text-red-600 bg-red-100 px-1.5 py-0.5 rounded-full font-bold">牛・馬・羊 NG</span>
+                        </button>
+                    </div>
+                    <div id="sos-food-card">${foodCard(selectedPerson)}</div>
+                </div>
+
+                <div id="sos-panel-medical" class="${activeTab==='medical'?'':'hidden'} space-y-4">
+                    <div class="bg-gradient-to-br from-red-500 to-rose-600 rounded-3xl p-5 text-white shadow-lg relative overflow-hidden">
+                        <div class="absolute right-2 bottom-0 opacity-10 text-8xl"><i class="fa-solid fa-truck-medical"></i></div>
+                        <p class="text-xs font-bold tracking-widest text-red-100 uppercase mb-1">Australia Emergency Line</p>
+                        <h3 class="text-3xl font-black mb-3">澳洲緊急求助專線</h3>
+                        <div class="flex gap-2">
+                            <a href="tel:000" class="flex-1 bg-white text-red-600 hover:bg-red-50 font-black py-3 rounded-2xl flex items-center justify-center gap-2 shadow-md transition text-lg">
+                                <i class="fa-solid fa-phone text-xl"></i> 撥打 000 (免費)
+                            </a>
+                        </div>
+                        <p class="text-[11px] text-red-100 mt-2.5 leading-tight">包含警察 (Police)、救護車 (Ambulance)、消防隊 (Fire)。英文不通時可說：<strong class="underline">"Mandarin, please"</strong></p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <div class="bg-blue-50 text-blue-600 p-2 rounded-xl"><i class="fa-solid fa-building-columns"></i></div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800">駐雪梨台北經濟文化辦事處</h4>
+                                    <p class="text-[11px] text-slate-500">旅外國人緊急救助專線</p>
+                                </div>
+                            </div>
+                            <a href="tel:+61412284825" class="bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                                <i class="fa-solid fa-phone"></i> 撥打
+                            </a>
+                        </div>
+                        <p class="text-xs font-mono bg-slate-50 p-2 rounded-xl text-slate-600">專線：+61-412-284-825 (澳洲境內撥 0412-284-825)</p>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 space-y-3">
+                        <h4 class="text-xs font-bold text-slate-400 flex items-center gap-1.5"><i class="fa-solid fa-hospital-user text-red-500"></i> 雪梨市區主要醫院 (Emergency Dept)</h4>
+                        <div class="p-3 bg-slate-50 rounded-2xl space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-800">Sydney Hospital (市中心)</span>
+                                <a href="https://www.google.com/maps/search/?api=1&query=Sydney+Hospital+8+Macquarie+St" target="_blank" class="text-[10px] text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md font-bold"><i class="fa-solid fa-map-location-dot mr-1"></i>地圖</a>
+                            </div>
+                            <p class="text-[11px] text-slate-500">8 Macquarie St, Sydney NSW 2000</p>
+                            <p class="text-[11px] text-slate-600 font-mono">Ph: (02) 9382 7111</p>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-2xl space-y-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-800">St Vincent's Hospital</span>
+                                <a href="https://www.google.com/maps/search/?api=1&query=St+Vincents+Hospital+Darlinghurst" target="_blank" class="text-[10px] text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md font-bold"><i class="fa-solid fa-map-location-dot mr-1"></i>地圖</a>
+                            </div>
+                            <p class="text-[11px] text-slate-500">390 Victoria St, Darlinghurst NSW 2010</p>
+                            <p class="text-[11px] text-slate-600 font-mono">Ph: (02) 9355 2000</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="text-xs font-bold text-slate-400 ml-1">緊急醫藥對話大字卡 (發音/展示)</h4>
+                        ${phraseCards}
+                    </div>
+                </div>
+            </div>`;
+
+            // Expose globals for inline handlers
+            window.sosSwitchTab = function(tab) {
+                activeTab = tab;
+                renderSos();
+            };
+            window.sosSelectPerson = function(p) {
+                selectedPerson = p;
+                renderSos();
+            };
+            window.sosSpeakLinle = () => speakText('I have no dietary restrictions. Beef, Pork, Lamb, Chicken and Seafood are all OK.');
+            window.sosSpeakZiv = () => speakText('Excuse me, I cannot eat beef or horse meat. Pork, chicken, lamb, and seafood are all fine.');
+            window.sosCopyZiv = () => copyText('Excuse me, I cannot eat beef or horse meat. Pork, chicken, lamb, and seafood are fine.');
+            window.sosSpeakJan = () => speakText('Excuse me, I cannot eat beef, horse, or lamb. Pork, chicken, and seafood are fine.');
+            window.sosCopyJan = () => copyText('Excuse me, I cannot eat beef, horse, or lamb. Pork, chicken, and seafood are fine.');
+            window.sosSpeakPhrase = (i) => speakText(emergencyPhrases[i].en);
+        }
+        renderSos();
+    }
+    </script>
+
+    <!-- ======================= -->
+    <!-- Voice Translator (Vanilla JS) -->
+    <!-- ======================= -->
+    <script>
+    function initVoiceTranslator() {
+        const root = document.getElementById('translator-root');
+        if (!root) return;
+
+        let customText = '';
+        let speechRate = 0.9;
+        let activeCategory = 'all';
+        let searchQuery = '';
+        let isPlaying = false;
+
+        const phrasesDatabase = [
+            { cat: 'dining', en: 'Table for four, please.', zh: '我們有四位，請問有位置嗎？' },
+            { cat: 'dining', en: 'Could we have the menu, please?', zh: '可以麻煩給我們菜單嗎？' },
+            { cat: 'dining', en: 'What do you recommend here?', zh: '請問這裡有什麼推薦的招牌菜？' },
+            { cat: 'dining', en: 'Does this dish contain beef or lamb?', zh: '請問這道菜含有牛肉或羊肉嗎？' },
+            { cat: 'dining', en: 'Could we get the bill, please? Separate checks if possible.', zh: '麻煩買單，請問可以分開付嗎？' },
+            { cat: 'dining', en: 'Can I have a glass of tap water, please?', zh: '請給我一杯免費的自來水/飲用水。' },
+            { cat: 'shopping', en: 'Can I get a TRS tax refund invoice for this purchase?', zh: '請問這筆消費可以開具 TRS 澳洲退稅發票嗎？' },
+            { cat: 'shopping', en: 'Is there any discount if we buy more?', zh: '如果我們買比較多的話有折扣嗎？' },
+            { cat: 'shopping', en: 'Can I pay by credit card / Apple Pay?', zh: '可以用信用卡或 Apple Pay 結帳嗎？' },
+            { cat: 'shopping', en: 'Where is the TRS tax refund counter at Sydney Airport?', zh: '請問雪梨機場的 TRS 退稅櫃檯在哪裡？' },
+            { cat: 'driving', en: 'Unleaded 91, full tank please on Pump 3.', zh: '3 號加油槍，請幫我加滿 91 無鉛汽油。' },
+            { cat: 'driving', en: 'Where can I pay for fuel?', zh: '請問加油費用要在哪裡付款？' },
+            { cat: 'driving', en: 'Is parking free here, or do I need to pay at the meter?', zh: '請問這裡停車免費嗎？還是需要去繳費機付費？' },
+            { cat: 'driving', en: 'Excuse me, how do I get to the Blue Mountains Motorway?', zh: '請問要怎麼走才能上前往藍山的高速公路？' },
+            { cat: 'transit', en: 'How much is an Opal card, and where can I top it up?', zh: '一張 Opal 卡多少錢？要去哪裡加值？' },
+            { cat: 'transit', en: 'Which platform goes to Circular Quay?', zh: '請問哪一個月台是開往環形碼頭 (Circular Quay) 的？' },
+            { cat: 'transit', en: 'Does this train go directly to Sydney Central Station?', zh: '這班火車有直達雪梨中央車站嗎？' },
+            { cat: 'hotel', en: 'Hi, I have a reservation under the name of Ziv.', zh: '你好，我有預約訂房，名字是 Ziv。' },
+            { cat: 'hotel', en: 'Can we leave our luggage here before check-in?', zh: '在辦理入住前，可以先寄放我們的行李嗎？' },
+            { cat: 'hotel', en: 'What is the Wi-Fi password, please?', zh: '請問 Wi-Fi 密碼是多少？' }
+        ];
+
+        const cats = [
+            { id: 'all', label: '全部' }, { id: 'dining', label: '🥐 點餐' },
+            { id: 'shopping', label: '🛒 退稅購物' }, { id: 'driving', label: '⛽ 加油自駕' },
+            { id: 'transit', label: '🚌 交通' }, { id: 'hotel', label: '🏨 住宿' }
+        ];
+
+        function handleSpeak(text) {
+            if (!('speechSynthesis' in window)) { alert('您的瀏覽器不支援 Web Speech 語音發音'); return; }
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-AU'; u.rate = speechRate;
+            u.onstart = () => { isPlaying = true; updatePlayBtn(); };
+            u.onend = u.onerror = () => { isPlaying = false; updatePlayBtn(); };
+            window.speechSynthesis.speak(u);
+        }
+        function handleStop() {
+            if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
+            isPlaying = false; updatePlayBtn();
+        }
+        function updatePlayBtn() {
+            const btn = document.getElementById('vt-speak-btn');
+            if (!btn) return;
+            if (isPlaying) {
+                btn.innerHTML = '<i class="fa-solid fa-square"></i> 停止';
+                btn.className = 'bg-rose-500 hover:bg-rose-600 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1';
+                btn.onclick = handleStop;
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i> 發音';
+                btn.className = 'bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm';
+                btn.onclick = () => { const v = document.getElementById('vt-input').value; if(v.trim()) handleSpeak(v); };
+            }
+        }
+
+        function renderTranslator() {
+            const filtered = phrasesDatabase.filter(p => {
+                const matchCat = activeCategory === 'all' || p.cat === activeCategory;
+                const q = searchQuery.toLowerCase();
+                return matchCat && (p.en.toLowerCase().includes(q) || p.zh.includes(searchQuery));
+            });
+
+            const catBtns = cats.map(c => `
+                <button onclick="vtSetCat('${c.id}')" class="flex-none px-3 py-1.5 rounded-xl text-[11px] font-bold transition-all ${activeCategory===c.id?'bg-sky-600 text-white shadow-sm':'bg-slate-100 text-slate-600 hover:bg-slate-200'}">${c.label}</button>
+            `).join('');
+
+            const phraseCards = filtered.map((p, i) => `
+                <div class="p-3.5 rounded-2xl bg-slate-50 hover:bg-sky-50/50 border border-slate-100 transition space-y-1.5">
+                    <div class="flex justify-between items-start gap-2">
+                        <p class="text-xs font-bold text-slate-800 leading-snug">${p.en.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>
+                        <div class="flex gap-1 flex-shrink-0">
+                            <button onclick="vtSpeak(${i})" class="p-1.5 bg-white text-sky-600 hover:bg-sky-600 hover:text-white rounded-lg text-xs shadow-sm transition" title="朗讀發音"><i class="fa-solid fa-volume-high"></i></button>
+                            <button onclick="vtCopy(${i})" class="p-1.5 bg-white text-slate-500 hover:bg-slate-700 hover:text-white rounded-lg text-xs shadow-sm transition" title="複製"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium">${p.zh}</p>
+                </div>`).join('');
+
+            root.innerHTML = `
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100 space-y-6">
+                <div class="flex items-center gap-2.5 border-b border-slate-100 pb-4">
+                    <div class="bg-sky-50 text-sky-600 p-2.5 rounded-2xl"><i class="fa-solid fa-language text-xl"></i></div>
+                    <div>
+                        <h3 class="text-base font-black text-slate-800">語音翻譯與對話助手</h3>
+                        <p class="text-xs text-slate-400">Web Speech API 英語發音與日常用語</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 space-y-3">
+                    <label class="text-xs font-bold text-slate-600 flex items-center justify-between">
+                        <span><i class="fa-solid fa-keyboard text-sky-500 mr-1.5"></i>自訂文字即時朗讀</span>
+                        <span class="text-[10px] text-slate-400">en-AU (澳洲語音)</span>
+                    </label>
+                    <div class="flex gap-2">
+                        <input id="vt-input" type="text" value="${customText.replace(/"/g,'&quot;')}" oninput="vtUpdateCustom(this.value)" placeholder="輸入任何英文句子 (例如: Where is the restroom?)" class="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-sky-500 bg-white">
+                        <button id="vt-speak-btn" onclick="vtSpeakCustom()" class="bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-sm"><i class="fa-solid fa-volume-high"></i> 發音</button>
+                    </div>
+                    <div class="flex items-center gap-3 pt-1">
+                        <span class="text-[10px] font-bold text-slate-500" id="vt-rate-label">語速 (${speechRate}x):</span>
+                        <input type="range" min="0.6" max="1.2" step="0.1" value="${speechRate}" oninput="vtSetRate(parseFloat(this.value))" class="w-28 accent-sky-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg">
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1"><i class="fa-solid fa-book-open text-sky-500"></i> 雪梨旅遊常用對話庫</h4>
+                        <span class="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full">共 ${filtered.length} 句</span>
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+                        <input type="text" value="${searchQuery.replace(/"/g,'&quot;')}" oninput="vtSearch(this.value)" placeholder="搜尋中英文關鍵字 (例如: 菜單, Opal, refund)..." class="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:border-sky-500 bg-slate-50/50">
+                    </div>
+                    <div class="flex space-x-1.5 overflow-x-auto pb-1 hide-scrollbar">${catBtns}</div>
+                    <div class="space-y-2.5 pt-1">${phraseCards}</div>
+                </div>
+            </div>`;
+        }
+
+        // Filtered phrases for onclick index mapping
+        function getFiltered() {
+            return phrasesDatabase.filter(p => {
+                const matchCat = activeCategory === 'all' || p.cat === activeCategory;
+                const q = searchQuery.toLowerCase();
+                return matchCat && (p.en.toLowerCase().includes(q) || p.zh.includes(searchQuery));
+            });
+        }
+
+        window.vtUpdateCustom = (v) => { customText = v; };
+        window.vtSpeakCustom = () => { const v = document.getElementById('vt-input')?.value || customText; if(v.trim()) handleSpeak(v); };
+        window.vtSetRate = (v) => { speechRate = v; document.getElementById('vt-rate-label').textContent = `語速 (${v}x):`; };
+        window.vtSetCat = (id) => { activeCategory = id; renderTranslator(); };
+        window.vtSearch = (q) => { searchQuery = q; renderTranslator(); };
+        window.vtSpeak = (i) => { handleSpeak(getFiltered()[i].en); };
+        window.vtCopy = (i) => { navigator.clipboard.writeText(getFiltered()[i].en); alert('已複製：\n' + getFiltered()[i].en); };
+
+        renderTranslator();
+    }
+    </script>
+
+    <!-- ======================= -->
+    <!-- Expense Tracker (Vanilla JS) -->
+    <!-- ======================= -->
+    <script>
+    function initExpenseTracker() {
+        const root = document.getElementById('expense-root');
+        if (!root) return;
+
+        let expenses = JSON.parse(localStorage.getItem('travel_expenses') || '[]');
+        let name = '', amount = '', category = '食', isSplit = true;
+        const categories = ['食', '衣', '住', '行', '育', '樂', '其他'];
+        // AUD exchange rate (use same as main)
+        const rate = 21.5;
+
+        function save() { localStorage.setItem('travel_expenses', JSON.stringify(expenses)); }
+
+        function stats() {
+            let totalAUD = 0, personalAUD = 0;
+            expenses.forEach(e => { totalAUD += e.amount; personalAUD += e.isSplit ? e.amount / 4 : e.amount; });
+            return {
+                totalAUD, personalAUD,
+                totalTWD: Math.round(totalAUD * rate),
+                personalTWD: Math.round(personalAUD * rate)
+            };
+        }
+
+        function render() {
+            const s = stats();
+            const catBtns = categories.map(c =>
+                `<button type="button" onclick="expSetCat('${c}')" class="px-4 py-1.5 rounded-full text-sm font-bold transition-all duration-200 ${category===c?'bg-blue-500 text-white shadow-md scale-105':'bg-white/60 text-gray-500 hover:bg-white/80'}">${c}</button>`
+            ).join('');
+
+            const expList = expenses.length === 0
+                ? '<p class="text-center text-gray-400 py-6 font-medium">尚無支出紀錄</p>'
+                : `<div class="space-y-3 max-h-[400px] overflow-y-auto pr-2">${expenses.map(e => `
+                    <div class="flex items-center justify-between p-4 bg-white/60 rounded-2xl border border-white/80 shadow-sm hover:shadow-md transition-all group">
+                        <div class="flex items-center space-x-4">
+                            <span class="w-11 h-11 flex items-center justify-center bg-blue-100/80 text-blue-600 rounded-2xl font-bold shadow-sm">${e.category}</span>
+                            <div>
+                                <p class="font-bold text-gray-800">${e.name}</p>
+                                <div class="flex items-center mt-1 space-x-2">
+                                    <span class="text-xs font-medium text-gray-400">${new Date(e.timestamp).toLocaleDateString()}</span>
+                                    ${e.isSplit ? '<span class="bg-emerald-100/80 text-emerald-700 px-2.5 py-0.5 rounded-md text-[10px] font-bold">已平分</span>' : '<span class="bg-amber-100/80 text-amber-700 px-2.5 py-0.5 rounded-md text-[10px] font-bold">個人付</span>'}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-right">
+                                <p class="font-extrabold text-gray-800">A$ ${e.amount.toLocaleString()}</p>
+                                <p class="text-xs font-medium text-gray-400">NT$ ${Math.round(e.amount * rate).toLocaleString()}</p>
+                            </div>
+                            <button onclick="expDelete('${e.id}')" class="text-gray-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-xl transition-all" title="刪除">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            </button>
+                        </div>
+                    </div>`).join('')}</div>`;
+
+            root.innerHTML = `
+            <div class="max-w-2xl mx-auto p-4 sm:p-6 bg-white/30 backdrop-blur-md rounded-3xl shadow-2xl border border-white/40">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center tracking-wide">記帳本</h2>
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-white/50 p-5 rounded-2xl shadow-sm border border-white/60">
+                        <p class="text-sm font-medium text-gray-500 mb-1">總支出</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">A$ ${s.totalAUD.toLocaleString()}</p>
+                        <p class="text-sm text-gray-500 font-medium">≈ NT$ ${s.totalTWD.toLocaleString()}</p>
+                    </div>
+                    <div class="bg-blue-50/50 p-5 rounded-2xl shadow-sm border border-blue-100/60">
+                        <p class="text-sm font-medium text-blue-500 mb-1">個人應付 (1/4)</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">A$ ${s.personalAUD.toLocaleString()}</p>
+                        <p class="text-sm text-blue-500 font-medium">≈ NT$ ${s.personalTWD.toLocaleString()}</p>
+                    </div>
+                </div>
+
+                <form onsubmit="expAdd(event)" class="space-y-5 mb-8 bg-white/40 p-5 sm:p-6 rounded-2xl border border-white/50 shadow-sm">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">項目名稱</label>
+                            <input type="text" id="exp-name" value="${name.replace(/"/g,'&quot;')}" oninput="expSetName(this.value)" class="w-full px-4 py-2.5 rounded-xl bg-white/70 border-none shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-400/50" placeholder="例如: 晚餐" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">金額 (澳幣 AUD)</label>
+                            <input type="number" id="exp-amount" value="${amount}" oninput="expSetAmount(this.value)" class="w-full px-4 py-2.5 rounded-xl bg-white/70 border-none shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-400/50" placeholder="A$ 0" min="0" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">類別</label>
+                        <div class="flex flex-wrap gap-2">${catBtns}</div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pt-3 gap-4">
+                        <label class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="exp-split" ${isSplit?'checked':''} onchange="expSetSplit(this.checked)" class="w-5 h-5 text-blue-500 rounded focus:ring-blue-400/50 bg-white/80 cursor-pointer">
+                            <span class="text-sm font-semibold text-gray-700">平分 (除以 4 人)</span>
+                        </label>
+                        <button type="submit" class="w-full sm:w-auto px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95">新增紀錄</button>
+                    </div>
+                </form>
+
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 px-2">歷史明細</h3>
+                    ${expList}
+                </div>
+            </div>`;
+        }
+
+        window.expSetName = (v) => { name = v; };
+        window.expSetAmount = (v) => { amount = v; };
+        window.expSetCat = (c) => { category = c; render(); };
+        window.expSetSplit = (v) => { isSplit = v; };
+        window.expAdd = (e) => {
+            e.preventDefault();
+            const n = document.getElementById('exp-name').value;
+            const a = parseFloat(document.getElementById('exp-amount').value);
+            if (!n || !a) return;
+            expenses.unshift({ id: crypto.randomUUID(), name: n, amount: a, category, isSplit, timestamp: Date.now() });
+            name = ''; amount = '';
+            save(); render();
+        };
+        window.expDelete = (id) => {
+            expenses = expenses.filter(e => e.id !== id);
+            save(); render();
+        };
+
+        render();
+    }
+    </script>
 </body>
 </html>
